@@ -1,9 +1,10 @@
 {
   "domain": "tapparella_lamelle_orientabili",
   "name": "Tapparella Lamelle Orientabili",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "config_flow": true,
-  "documentation": "https://github.com/TUO_USERNAME/tapparella-lamelle-orientabili",
+  "documentation": "https://github.com/UlfgarIlFabbro/tapparella-lamelle-orientabili",
   "requirements": [],
-  "codeowners": []
+  "codeowners": [],
+  "iot_class": "local_polling"
 }
