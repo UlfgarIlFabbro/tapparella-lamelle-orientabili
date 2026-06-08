@@ -1,0 +1,1 @@
+DOMAIN = "tapparella_lamelle_orientabili"

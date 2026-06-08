@@ -1,0 +1,9 @@
+{
+  "domain": "tapparella_lamelle_orientabili",
+  "name": "Tapparella Lamelle Orientabili",
+  "version": "1.0.0",
+  "config_flow": true,
+  "documentation": "https://github.com/TUO_USERNAME/tapparella-lamelle-orientabili",
+  "requirements": [],
+  "codeowners": []
+}
