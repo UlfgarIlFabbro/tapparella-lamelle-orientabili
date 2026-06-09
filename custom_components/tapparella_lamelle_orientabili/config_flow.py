@@ -3,11 +3,11 @@ from homeassistant import config_entries
 from homeassistant.helpers import entity_registry as er
 
 from .const import DOMAIN
-from .cover import HA_URL, webhook_id_su, webhook_id_giu, webhook_id_lamelle
+from .cover import HA_URL, _ip_slug
 
 
 def _get_shelly_covers(hass):
-    """Restituisce dict {nome_entità: ip} filtrando solo le cover Shelly."""
+    """Restituisce dict {nome_entita (ip): ip} filtrando solo le cover Shelly."""
     ent_reg = er.async_get(hass)
     result = {}
 
@@ -16,7 +16,6 @@ def _get_shelly_covers(hass):
         if not ip:
             continue
 
-        # Cerca entità cover associate a questa config entry
         covers = [
             e for e in ent_reg.entities.values()
             if e.config_entry_id == entry.entry_id
@@ -74,9 +73,10 @@ class TapparellaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 data={"name": self._name, "ip": self._ip},
             )
 
-        url_su = f"{HA_URL}/api/webhook/{webhook_id_su(self._ip)}"
-        url_giu = f"{HA_URL}/api/webhook/{webhook_id_giu(self._ip)}"
-        url_lamelle = f"{HA_URL}/api/webhook/{webhook_id_lamelle(self._ip)}"
+        slug = _ip_slug(self._ip)
+        url_su = f"{HA_URL}/api/tapparella/{slug}/su"
+        url_giu = f"{HA_URL}/api/tapparella/{slug}/giu"
+        url_lamelle = f"{HA_URL}/api/tapparella/{slug}/lamelle"
 
         return self.async_show_form(
             step_id="webhook",
