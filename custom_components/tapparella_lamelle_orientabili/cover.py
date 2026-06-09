@@ -1,10 +1,8 @@
 """Tapparella Cherubini con lamelle orientabili - controllo diretto Shelly Gen2."""
 import logging
 import aiohttp
-from aiohttp.web import Request
 
 from homeassistant.components.cover import CoverEntity, CoverEntityFeature
-from homeassistant.components.webhook import async_register, async_unregister
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -37,12 +35,13 @@ class CherubiniCover(CoverEntity):
         | CoverEntityFeature.OPEN_TILT
     )
 
-    def __init__(self, hass: HomeAssistant, name: str, ip: str):
+    def __init__(self, hass: HomeAssistant, entry: ConfigEntry):
         self.hass = hass
-        self._name = name
-        self._ip = ip
-        self._state = STATE_OPEN
-        self._attr_unique_id = f"tlo_{ip.replace('.', '_')}"
+        self._entry = entry
+        self._name = entry.data["name"]
+        self._ip = entry.data["ip"]
+        self._state = entry.data.get("state", STATE_OPEN)
+        self._attr_unique_id = f"tlo_{self._ip.replace('.', '_')}"
 
     @property
     def name(self) -> str:
@@ -56,34 +55,12 @@ class CherubiniCover(CoverEntity):
     def current_cover_tilt_position(self) -> int:
         return 100 if self._state == STATE_TILT else 0
 
-    async def async_added_to_hass(self):
-        """Registra i webhook quando l'entità viene aggiunta a HA."""
-        ip = self._ip
-
-        async def handle_su(hass, webhook_id, request: Request):
-            self._state = STATE_OPEN
-            self.async_write_ha_state()
-
-        async def handle_giu(hass, webhook_id, request: Request):
-            self._state = STATE_CLOSED
-            self.async_write_ha_state()
-
-        async def handle_lamelle(hass, webhook_id, request: Request):
-            self._state = STATE_TILT
-            self.async_write_ha_state()
-
-        async_register(self.hass, "tapparella_lamelle_orientabili", webhook_id_su(ip), handle_su)
-        async_register(self.hass, "tapparella_lamelle_orientabili", webhook_id_giu(ip), handle_giu)
-        async_register(self.hass, "tapparella_lamelle_orientabili", webhook_id_lamelle(ip), handle_lamelle)
-
-    async def async_will_remove_from_hass(self):
-        """Deregistra i webhook alla rimozione."""
-        async_unregister(self.hass, webhook_id_su(self._ip))
-        async_unregister(self.hass, webhook_id_giu(self._ip))
-        async_unregister(self.hass, webhook_id_lamelle(self._ip))
+    def _save_state(self):
+        """Persiste lo stato nel ConfigEntry per sopravvivere ai riavvii."""
+        new_data = {**self._entry.data, "state": self._state}
+        self.hass.config_entries.async_update_entry(self._entry, data=new_data)
 
     async def _shelly_call(self, path: str) -> bool:
-        """Chiama l'API REST dello Shelly."""
         url = f"http://{self._ip}/{path}"
         try:
             async with aiohttp.ClientSession() as session:
@@ -99,18 +76,21 @@ class CherubiniCover(CoverEntity):
         """Su."""
         if await self._shelly_call("roller/0?go=open"):
             self._state = STATE_OPEN
+            self._save_state()
             self.async_write_ha_state()
 
     async def async_close_cover(self, **kwargs):
         """Giù — pressione breve (duration=1s)."""
         if await self._shelly_call("roller/0?go=close&duration=1"):
             self._state = STATE_CLOSED
+            self._save_state()
             self.async_write_ha_state()
 
     async def async_open_cover_tilt(self, **kwargs):
         """Lamelle — va al finecorsa 2.5s."""
         if await self._shelly_call("roller/0?go=close"):
             self._state = STATE_TILT
+            self._save_state()
             self.async_write_ha_state()
 
 
@@ -119,9 +99,5 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    entity = CherubiniCover(
-        hass=hass,
-        name=entry.data["name"],
-        ip=entry.data["ip"],
-    )
+    entity = CherubiniCover(hass=hass, entry=entry)
     async_add_entities([entity], update_before_add=False)
