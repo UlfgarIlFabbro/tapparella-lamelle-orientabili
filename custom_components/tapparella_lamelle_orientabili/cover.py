@@ -7,19 +7,9 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
-from .const import ENTITY_STORE
+from .const import DOMAIN, ENTITY_STORE, STATE_OPEN, STATE_CLOSED, STATE_TILT, ip_slug
 
 _LOGGER = logging.getLogger(__name__)
-
-STATE_OPEN = "open"
-STATE_CLOSED = "closed"
-STATE_TILT = "tilt"
-
-HA_URL = "http://192.168.1.2:8123"
-
-
-def _ip_slug(ip: str) -> str:
-    return ip.replace(".", "_")
 
 
 class CherubiniCover(CoverEntity):
@@ -37,7 +27,7 @@ class CherubiniCover(CoverEntity):
         self._name = entry.data["name"]
         self._ip = entry.data["ip"]
         self._state = entry.data.get("state", STATE_OPEN)
-        self._attr_unique_id = f"tlo_{_ip_slug(self._ip)}"
+        self._attr_unique_id = f"tlo_{ip_slug(self._ip)}"
 
     @property
     def name(self) -> str:
@@ -95,5 +85,5 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     entity = CherubiniCover(hass=hass, entry=entry)
-    ENTITY_STORE[_ip_slug(entry.data["ip"])] = entity
+    ENTITY_STORE[ip_slug(entry.data["ip"])] = entity
     async_add_entities([entity], update_before_add=False)
