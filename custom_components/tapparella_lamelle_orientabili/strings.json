@@ -1,0 +1,23 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configura Tapparella",
+        "data": {
+          "name": "Nome",
+          "shelly_device": "Dispositivo Shelly",
+          "ip": "Indirizzo IP Shelly"
+        }
+      },
+      "webhook": {
+        "title": "Configura azioni Shelly",
+        "description": "Configura questi URL nelle azioni del tuo Shelly (Actions > URL Actions):\n\n**Pulsante SU — single press:**\n{url_su}\n\n**Pulsante GIÙ — single press:**\n{url_giu}\n\n**Pulsante GIÙ — long press (lamelle):**\n{url_lamelle}\n\nClicca INVIA per completare la configurazione.",
+        "data": {}
+      }
+    },
+    "error": {},
+    "abort": {
+      "already_configured": "Dispositivo già configurato"
+    }
+  }
+}
