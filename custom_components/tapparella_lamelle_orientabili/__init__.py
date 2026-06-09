@@ -1,11 +1,12 @@
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from aiohttp import web
 from aiohttp.web import Request, Response
 
 from homeassistant.components.http import HomeAssistantView
 from .const import DOMAIN, ENTITY_STORE
 from .cover import STATE_OPEN, STATE_CLOSED, STATE_TILT, _ip_slug
+
+_VIEW_REGISTERED = False
 
 
 class TapparellaView(HomeAssistantView):
@@ -36,13 +37,20 @@ class TapparellaView(HomeAssistantView):
 
 
 async def async_setup(hass: HomeAssistant, config: dict):
-    hass.http.register_view(TapparellaView())
     return True
 
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
+    global _VIEW_REGISTERED
     hass.data.setdefault(DOMAIN, {})
+
+    if not _VIEW_REGISTERED:
+        hass.http.register_view(TapparellaView())
+        _VIEW_REGISTERED = True
+
     await hass.config_entries.async_forward_entry_setups(entry, ["cover"])
     return True
+
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     ip = entry.data.get("ip", "")
