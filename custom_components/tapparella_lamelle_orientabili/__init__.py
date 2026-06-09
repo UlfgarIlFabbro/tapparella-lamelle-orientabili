@@ -1,6 +1,7 @@
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from aiohttp import web
+from aiohttp.web import Request, Response
 
 from homeassistant.components.http import HomeAssistantView
 from .const import DOMAIN, ENTITY_STORE
@@ -13,11 +14,12 @@ class TapparellaView(HomeAssistantView):
     url = "/api/tapparella/{slug}/{action}"
     name = "api:tapparella"
     requires_auth = False
+    cors_allowed = True
 
-    async def get(self, request, slug, action):
+    async def get(self, request: Request, slug: str, action: str) -> Response:
         entity = ENTITY_STORE.get(slug)
         if entity is None:
-            return web.Response(status=404, text="Tapparella non trovata")
+            return Response(status=404, text="Tapparella non trovata")
 
         if action == "su":
             entity._state = STATE_OPEN
@@ -26,11 +28,11 @@ class TapparellaView(HomeAssistantView):
         elif action == "lamelle":
             entity._state = STATE_TILT
         else:
-            return web.Response(status=400, text="Azione non valida")
+            return Response(status=400, text="Azione non valida")
 
         entity._save_state()
         entity.async_write_ha_state()
-        return web.Response(status=200, text="OK")
+        return Response(status=200, text="OK")
 
 
 async def async_setup(hass: HomeAssistant, config: dict):
