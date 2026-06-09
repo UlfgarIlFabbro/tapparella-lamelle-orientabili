@@ -42,7 +42,7 @@ class CherubiniCover(CoverEntity):
         self._name = name
         self._ip = ip
         self._state = STATE_OPEN
-        self._attr_unique_id = f"cherubini_{ip.replace('.', '_')}"
+        self._attr_unique_id = f"tlo_{ip.replace('.', '_')}"
 
     @property
     def name(self) -> str:
