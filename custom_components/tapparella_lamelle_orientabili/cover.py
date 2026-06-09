@@ -1,5 +1,7 @@
 from homeassistant.components.cover import CoverEntity
-
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 
 class CherubiniCover(CoverEntity):
 
@@ -50,3 +52,17 @@ class CherubiniCover(CoverEntity):
     @property
     def current_cover_tilt_position(self):
         return 100 if self._tilt else 0
+
+
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+):
+    entity = CherubiniCover(
+        hass,
+        entry.data["name"],
+        entry.data["cover_entity"],
+        entry.data.get("ip"),
+    )
+    async_add_entities([entity])
