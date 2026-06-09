@@ -2,8 +2,7 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.helpers import entity_registry as er
 
-from .const import DOMAIN
-from .cover import HA_URL, _ip_slug
+from .const import DOMAIN, HA_URL, ip_slug
 
 
 def _get_shelly_covers(hass):
@@ -73,7 +72,7 @@ class TapparellaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 data={"name": self._name, "ip": self._ip},
             )
 
-        slug = _ip_slug(self._ip)
+        slug = ip_slug(self._ip)
         url_su = f"{HA_URL}/api/tapparella/{slug}/su"
         url_giu = f"{HA_URL}/api/tapparella/{slug}/giu"
         url_lamelle = f"{HA_URL}/api/tapparella/{slug}/lamelle"
