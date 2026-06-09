@@ -1,21 +1,31 @@
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
 
 from .const import DOMAIN
 from .cover import HA_URL, webhook_id_su, webhook_id_giu, webhook_id_lamelle
 
 
-def _get_shelly_devices(hass):
-    """Restituisce dict {nome_dispositivo: ip} leggendo l'IP dalle config entry Shelly."""
+def _get_shelly_covers(hass):
+    """Restituisce dict {nome_entità: ip} filtrando solo le cover Shelly."""
+    ent_reg = er.async_get(hass)
     result = {}
 
     for entry in hass.config_entries.async_entries("shelly"):
         ip = entry.data.get("host")
         if not ip:
             continue
-        name = entry.title or ip
-        result[name] = ip
+
+        # Cerca entità cover associate a questa config entry
+        covers = [
+            e for e in ent_reg.entities.values()
+            if e.config_entry_id == entry.entry_id
+            and e.domain == "cover"
+        ]
+
+        for cover_entity in covers:
+            name = cover_entity.name or cover_entity.original_name or cover_entity.entity_id
+            result[f"{name} ({ip})"] = ip
 
     return result
 
@@ -30,20 +40,20 @@ class TapparellaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(self, user_input=None):
         errors = {}
-        shelly_devices = _get_shelly_devices(self.hass)
+        shelly_covers = _get_shelly_covers(self.hass)
 
         if user_input is not None:
             self._name = user_input["name"]
-            if shelly_devices:
-                self._ip = shelly_devices[user_input["shelly_device"]]
+            if shelly_covers:
+                self._ip = shelly_covers[user_input["shelly_device"]]
             else:
                 self._ip = user_input["ip"]
             return await self.async_step_webhook()
 
-        if shelly_devices:
+        if shelly_covers:
             schema = vol.Schema({
                 vol.Required("name"): str,
-                vol.Required("shelly_device"): vol.In(list(shelly_devices.keys())),
+                vol.Required("shelly_device"): vol.In(list(shelly_covers.keys())),
             })
         else:
             schema = vol.Schema({
