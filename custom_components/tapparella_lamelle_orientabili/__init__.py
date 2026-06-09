@@ -3,10 +3,8 @@ from homeassistant.core import HomeAssistant
 from aiohttp import web
 
 from homeassistant.components.http import HomeAssistantView
-from .const import DOMAIN
-from .cover import STATE_OPEN, STATE_CLOSED, STATE_TILT, _ip_slug, HA_URL
-
-ENTITY_STORE = {}
+from .const import DOMAIN, ENTITY_STORE
+from .cover import STATE_OPEN, STATE_CLOSED, STATE_TILT, _ip_slug
 
 
 class TapparellaView(HomeAssistantView):
