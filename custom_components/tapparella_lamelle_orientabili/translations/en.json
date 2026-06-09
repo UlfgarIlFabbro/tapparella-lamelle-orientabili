@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configure Cover",
+        "data": {
+          "name": "Name",
+          "shelly_device": "Shelly Device",
+          "ip": "Shelly IP Address"
+        }
+      },
+      "webhook": {
+        "title": "Configure Shelly Actions",
+        "description": "Add these URLs in your Shelly device under Actions > URL Actions:\n\n**Button UP — single push:**\n{url_su}\n\n**Button DOWN — single push:**\n{url_giu}\n\n**Button DOWN — long push (slats):**\n{url_lamelle}\n\nClick SUBMIT to complete setup."
+      }
+    },
+    "error": {},
+    "abort": {
+      "already_configured": "Device already configured"
+    }
+  }
+}
