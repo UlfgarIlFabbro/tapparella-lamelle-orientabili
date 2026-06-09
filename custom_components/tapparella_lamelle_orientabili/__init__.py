@@ -3,8 +3,7 @@ from homeassistant.core import HomeAssistant
 from aiohttp.web import Request, Response
 
 from homeassistant.components.http import HomeAssistantView
-from .const import DOMAIN, ENTITY_STORE
-from .cover import STATE_OPEN, STATE_CLOSED, STATE_TILT, _ip_slug
+from .const import DOMAIN, ENTITY_STORE, STATE_OPEN, STATE_CLOSED, STATE_TILT, ip_slug
 
 _VIEW_REGISTERED = False
 
@@ -53,7 +52,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
-    ip = entry.data.get("ip", "")
-    ENTITY_STORE.pop(_ip_slug(ip), None)
+    ENTITY_STORE.pop(ip_slug(entry.data.get("ip", "")), None)
     await hass.config_entries.async_unload_platforms(entry, ["cover"])
     return True
