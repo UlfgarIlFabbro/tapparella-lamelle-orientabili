@@ -1,12 +1,13 @@
 """Tapparella Cherubini con lamelle orientabili - controllo diretto Shelly Gen2."""
 import logging
 import aiohttp
+from aiohttp.web import Request
 
 from homeassistant.components.cover import CoverEntity, CoverEntityFeature
 from homeassistant.components.webhook import async_register, async_unregister
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, Request
+from homeassistant.core import HomeAssistant
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -71,18 +72,9 @@ class CherubiniCover(CoverEntity):
             self._state = STATE_TILT
             self.async_write_ha_state()
 
-        async_register(
-            self.hass, "tapparella_lamelle_orientabili",
-            webhook_id_su(ip), handle_su
-        )
-        async_register(
-            self.hass, "tapparella_lamelle_orientabili",
-            webhook_id_giu(ip), handle_giu
-        )
-        async_register(
-            self.hass, "tapparella_lamelle_orientabili",
-            webhook_id_lamelle(ip), handle_lamelle
-        )
+        async_register(self.hass, "tapparella_lamelle_orientabili", webhook_id_su(ip), handle_su)
+        async_register(self.hass, "tapparella_lamelle_orientabili", webhook_id_giu(ip), handle_giu)
+        async_register(self.hass, "tapparella_lamelle_orientabili", webhook_id_lamelle(ip), handle_lamelle)
 
     async def async_will_remove_from_hass(self):
         """Deregistra i webhook alla rimozione."""
