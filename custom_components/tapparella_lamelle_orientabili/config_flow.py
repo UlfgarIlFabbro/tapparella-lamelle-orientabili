@@ -1,6 +1,5 @@
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.helpers.entity_registry import async_get
 
 from .const import DOMAIN
 
@@ -18,17 +17,9 @@ class TapparellaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 data=user_input,
             )
 
-        er = async_get(self.hass)
-        covers = [
-            e.entity_id
-            for e in er.entities.values()
-            if e.entity_id.startswith("cover.")
-        ]
-
         schema = vol.Schema({
             vol.Required("name"): str,
-            vol.Required("cover_entity"): vol.In(covers),
-            vol.Optional("ip"): str,
+            vol.Required("ip"): str,
         })
 
         return self.async_show_form(
