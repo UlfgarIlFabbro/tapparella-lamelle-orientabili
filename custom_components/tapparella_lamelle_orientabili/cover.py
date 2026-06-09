@@ -7,6 +7,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
+from .const import ENTITY_STORE
+
 _LOGGER = logging.getLogger(__name__)
 
 STATE_OPEN = "open"
@@ -92,7 +94,6 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    from . import ENTITY_STORE
     entity = CherubiniCover(hass=hass, entry=entry)
     ENTITY_STORE[_ip_slug(entry.data["ip"])] = entity
     async_add_entities([entity], update_before_add=False)
