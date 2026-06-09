@@ -1,30 +1,35 @@
+"""Tapparella Cherubini con lamelle orientabili - controllo diretto Shelly Gen2."""
+import logging
+import aiohttp
+
 from homeassistant.components.cover import CoverEntity, CoverEntityFeature
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
+_LOGGER = logging.getLogger(__name__)
+
+# Stati possibili
+STATE_OPEN = "open"          # tapparella su
+STATE_CLOSED = "closed"      # tapparella giù (chiusa)
+STATE_TILT = "tilt"          # tapparella giù con lamelle aperte
+
 
 class CherubiniCover(CoverEntity):
-    """Tapparella Cherubini con lamelle orientabili via Shelly."""
+    """Tapparella Cherubini con lamelle orientabili via Shelly Plus 2PM."""
 
-    # Solo apertura, chiusura, stop e tilt — niente position slider
     _attr_supported_features = (
         CoverEntityFeature.OPEN
         | CoverEntityFeature.CLOSE
-        | CoverEntityFeature.STOP
         | CoverEntityFeature.OPEN_TILT
-        | CoverEntityFeature.CLOSE_TILT
-        | CoverEntityFeature.STOP_TILT
     )
 
-    def __init__(self, hass: HomeAssistant, name: str, entity_id: str, ip: str = None):
+    def __init__(self, hass: HomeAssistant, name: str, ip: str):
         self.hass = hass
         self._name = name
-        self._entity_id = entity_id
         self._ip = ip
-        self._is_closed = False
-        self._tilt_open = False
-        self._attr_unique_id = f"cherubini_{entity_id}"
+        self._state = STATE_OPEN
+        self._attr_unique_id = f"cherubini_{ip.replace('.', '_')}"
 
     @property
     def name(self) -> str:
@@ -32,61 +37,43 @@ class CherubiniCover(CoverEntity):
 
     @property
     def is_closed(self) -> bool:
-        return self._is_closed
+        return self._state in (STATE_CLOSED, STATE_TILT)
 
     @property
     def current_cover_tilt_position(self) -> int:
-        return 100 if self._tilt_open else 0
+        """100 = lamelle aperte, 0 = lamelle chiuse."""
+        return 100 if self._state == STATE_TILT else 0
 
-    # --- Tapparella su/giù/stop ---
+    async def _shelly_call(self, path: str) -> bool:
+        """Chiama l'API REST dello Shelly Gen1-style (roller endpoint)."""
+        url = f"http://{self._ip}/{path}"
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, timeout=aiohttp.ClientTimeout(total=5)) as resp:
+                    if resp.status == 200:
+                        return True
+                    _LOGGER.warning("Shelly risponde %s per %s", resp.status, url)
+        except Exception as err:
+            _LOGGER.error("Errore chiamata Shelly %s: %s", url, err)
+        return False
 
-    def open_cover(self, **kwargs):
-        """Su."""
-        self.hass.services.call(
-            "cover", "open_cover", {"entity_id": self._entity_id}, False
-        )
-        self._is_closed = False
-        self.schedule_update_ha_state()
+    async def async_open_cover(self, **kwargs):
+        """Su — pressione breve salita (finecorsa 0.25s)."""
+        if await self._shelly_call("roller/0?go=open"):
+            self._state = STATE_OPEN
+            self.async_write_ha_state()
 
-    def close_cover(self, **kwargs):
-        """Giù."""
-        self.hass.services.call(
-            "cover", "close_cover", {"entity_id": self._entity_id}, False
-        )
-        self._is_closed = True
-        self.schedule_update_ha_state()
+    async def async_close_cover(self, **kwargs):
+        """Giù — pressione breve discesa (duration=1s, finecorsa 2.5s)."""
+        if await self._shelly_call("roller/0?go=close&duration=1"):
+            self._state = STATE_CLOSED
+            self.async_write_ha_state()
 
-    def stop_cover(self, **kwargs):
-        """Stop tapparella."""
-        self.hass.services.call(
-            "cover", "stop_cover", {"entity_id": self._entity_id}, False
-        )
-        self.schedule_update_ha_state()
-
-    # --- Lamelle apri/chiudi/stop ---
-
-    def open_cover_tilt(self, **kwargs):
-        """Apri lamelle (impulso breve Shelly)."""
-        self.hass.services.call(
-            "cover", "close_cover", {"entity_id": self._entity_id}, False
-        )
-        self._tilt_open = True
-        self.schedule_update_ha_state()
-
-    def close_cover_tilt(self, **kwargs):
-        """Chiudi lamelle."""
-        self.hass.services.call(
-            "cover", "close_cover", {"entity_id": self._entity_id}, False
-        )
-        self._tilt_open = False
-        self.schedule_update_ha_state()
-
-    def stop_cover_tilt(self, **kwargs):
-        """Stop lamelle."""
-        self.hass.services.call(
-            "cover", "stop_cover", {"entity_id": self._entity_id}, False
-        )
-        self.schedule_update_ha_state()
+    async def async_open_cover_tilt(self, **kwargs):
+        """Lamelle — pressione lunga discesa (va al finecorsa 2.5s)."""
+        if await self._shelly_call("roller/0?go=close"):
+            self._state = STATE_TILT
+            self.async_write_ha_state()
 
 
 async def async_setup_entry(
@@ -97,7 +84,6 @@ async def async_setup_entry(
     entity = CherubiniCover(
         hass=hass,
         name=entry.data["name"],
-        entity_id=entry.data["cover_entity"],
-        ip=entry.data.get("ip"),
+        ip=entry.data["ip"],
     )
-    async_add_entities([entity], update_before_add=True)
+    async_add_entities([entity], update_before_add=False)
