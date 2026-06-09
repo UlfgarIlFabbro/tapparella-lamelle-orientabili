@@ -5,11 +5,16 @@ from homeassistant.core import HomeAssistant
 
 
 class CherubiniCover(CoverEntity):
+    """Tapparella Cherubini con lamelle orientabili via Shelly."""
 
+    # Solo apertura, chiusura, stop e tilt — niente position slider
     _attr_supported_features = (
         CoverEntityFeature.OPEN
         | CoverEntityFeature.CLOSE
-        | CoverEntityFeature.SET_TILT_POSITION
+        | CoverEntityFeature.STOP
+        | CoverEntityFeature.OPEN_TILT
+        | CoverEntityFeature.CLOSE_TILT
+        | CoverEntityFeature.STOP_TILT
     )
 
     def __init__(self, hass: HomeAssistant, name: str, entity_id: str, ip: str = None):
@@ -17,8 +22,8 @@ class CherubiniCover(CoverEntity):
         self._name = name
         self._entity_id = entity_id
         self._ip = ip
-        self._tilt_position = 0
         self._is_closed = False
+        self._tilt_open = False
         self._attr_unique_id = f"cherubini_{entity_id}"
 
     @property
@@ -31,30 +36,56 @@ class CherubiniCover(CoverEntity):
 
     @property
     def current_cover_tilt_position(self) -> int:
-        return self._tilt_position
+        return 100 if self._tilt_open else 0
+
+    # --- Tapparella su/giù/stop ---
 
     def open_cover(self, **kwargs):
+        """Su."""
         self.hass.services.call(
             "cover", "open_cover", {"entity_id": self._entity_id}, False
         )
         self._is_closed = False
-        self._tilt_position = 0
         self.schedule_update_ha_state()
 
     def close_cover(self, **kwargs):
+        """Giù."""
         self.hass.services.call(
             "cover", "close_cover", {"entity_id": self._entity_id}, False
         )
         self._is_closed = True
-        self._tilt_position = 0
         self.schedule_update_ha_state()
 
-    def set_cover_tilt_position(self, tilt_position: int, **kwargs):
-        # Tilt: chiusura breve via Shelly per orientare le lamelle
+    def stop_cover(self, **kwargs):
+        """Stop tapparella."""
+        self.hass.services.call(
+            "cover", "stop_cover", {"entity_id": self._entity_id}, False
+        )
+        self.schedule_update_ha_state()
+
+    # --- Lamelle apri/chiudi/stop ---
+
+    def open_cover_tilt(self, **kwargs):
+        """Apri lamelle (impulso breve Shelly)."""
         self.hass.services.call(
             "cover", "close_cover", {"entity_id": self._entity_id}, False
         )
-        self._tilt_position = tilt_position
+        self._tilt_open = True
+        self.schedule_update_ha_state()
+
+    def close_cover_tilt(self, **kwargs):
+        """Chiudi lamelle."""
+        self.hass.services.call(
+            "cover", "close_cover", {"entity_id": self._entity_id}, False
+        )
+        self._tilt_open = False
+        self.schedule_update_ha_state()
+
+    def stop_cover_tilt(self, **kwargs):
+        """Stop lamelle."""
+        self.hass.services.call(
+            "cover", "stop_cover", {"entity_id": self._entity_id}, False
+        )
         self.schedule_update_ha_state()
 
 
