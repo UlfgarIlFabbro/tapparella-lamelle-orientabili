@@ -3,7 +3,6 @@ import aiohttp
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.helpers import entity_registry as er, area_registry as ar
-import socket
 
 from .const import DOMAIN, ip_slug
 
@@ -11,53 +10,42 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def _get_shelly_covers(hass):
-    """Restituisce dict {nome_entita (ip): ip} filtrando solo le cover Shelly."""
     ent_reg = er.async_get(hass)
     result = {}
-
     for entry in hass.config_entries.async_entries("shelly"):
         ip = entry.data.get("host")
         if not ip:
             continue
         covers = [
             e for e in ent_reg.entities.values()
-            if e.config_entry_id == entry.entry_id
-            and e.domain == "cover"
+            if e.config_entry_id == entry.entry_id and e.domain == "cover"
         ]
         for cover_entity in covers:
             name = cover_entity.name or cover_entity.original_name or cover_entity.entity_id
             result[f"{name} ({ip})"] = ip
-
     return result
 
 
 def _get_areas(hass):
-    """Restituisce dict {nome_area: area_id}."""
     area_reg = ar.async_get(hass)
     return {area.name: area.id for area in area_reg.async_list_areas()}
 
 
-def _get_internal_url(hass):
-    """Ricava l'IP locale di HA tramite socket e restituisce l'URL interno."""
-    try:
-        # Apre una connessione UDP verso un IP esterno per ricavare l'IP locale
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        local_ip = s.getsockname()[0]
-        s.close()
-        # Usa la porta di HA (8123 di default)
-        port = hass.config.api.port if hass.config.api else 8123
-        scheme = "https" if hass.config.api and hass.config.api.use_ssl else "http"
-        return f"{scheme}://{local_ip}:{port}"
-    except Exception:
-        return "https://192.168.1.2:8123"
+def _guess_ha_url(shelly_ip):
+    """Ricava un URL HA plausibile dallo stesso subnet dello Shelly."""
+    parts = shelly_ip.split(".")
+    if len(parts) == 4:
+        return f"https://{parts[0]}.{parts[1]}.{parts[2]}.2:8123"
+    return "https://192.168.1.2:8123"
 
 
 async def _configure_shelly_actions(shelly_ip, input_salita, ha_url, ip_s):
     """Aggiunge gli URL HA agli webhook esistenti sullo Shelly via Webhook.Update."""
     input_discesa = 1 if input_salita == 0 else 0
 
-    # Mappa evento -> (cid, url_ha)
+    _LOGGER.error("TLO SHELLY CONFIG START: ip=%s input_salita=%s ha_url=%s ip_s=%s",
+                  shelly_ip, input_salita, ha_url, ip_s)
+
     event_map = {
         "input.button_push": {
             input_salita: f"{ha_url}/api/tapparella/{ip_s}/su",
@@ -68,28 +56,31 @@ async def _configure_shelly_actions(shelly_ip, input_salita, ha_url, ip_s):
         },
     }
 
-    _LOGGER.error("TLO: avvio configurazione Shelly %s, input_salita=%s, ha_url=%s", shelly_ip, input_salita, ha_url)
     try:
-        async with aiohttp.ClientSession() as session:
+        timeout = aiohttp.ClientTimeout(total=10)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+
             # Leggi gli hook esistenti
+            _LOGGER.error("TLO: chiamata Webhook.List a %s", shelly_ip)
             async with session.post(
                 f"http://{shelly_ip}/rpc",
                 json={"id": 1, "method": "Webhook.List"},
-                timeout=aiohttp.ClientTimeout(total=5)
             ) as resp:
                 data = await resp.json()
 
             hooks = data.get("hooks", [])
-            _LOGGER.error("TLO: trovati %d hook: %s", len(hooks), [h.get('id') for h in hooks])
+            _LOGGER.error("TLO: trovati %d hook", len(hooks))
 
             for hook in hooks:
                 hook_cid = hook.get("cid")
                 hook_event = hook.get("event")
                 hook_id = hook.get("id")
-                existing_urls = hook.get("urls", [])
+                existing_urls = list(hook.get("urls", []))
 
-                # Controlla se questo hook corrisponde a uno dei nostri eventi
                 url_to_add = event_map.get(hook_event, {}).get(hook_cid)
+                _LOGGER.error("TLO: hook id=%s event=%s cid=%s url_to_add=%s",
+                              hook_id, hook_event, hook_cid, url_to_add)
+
                 if url_to_add and url_to_add not in existing_urls:
                     new_urls = existing_urls + [url_to_add]
                     payload = {
@@ -104,13 +95,14 @@ async def _configure_shelly_actions(shelly_ip, input_salita, ha_url, ip_s):
                     async with session.post(
                         f"http://{shelly_ip}/rpc",
                         json=payload,
-                        timeout=aiohttp.ClientTimeout(total=5)
                     ) as resp:
                         result = await resp.json()
-                        _LOGGER.debug("Webhook.Update response: %s", result)
+                        _LOGGER.error("TLO: Webhook.Update id=%s result=%s", hook_id, result)
+
+        _LOGGER.error("TLO SHELLY CONFIG END: completato")
 
     except Exception as err:
-        _LOGGER.error("Errore configurazione azioni Shelly: %s", err, exc_info=True)
+        _LOGGER.error("TLO ERRORE: %s", err, exc_info=True)
 
 
 class TapparellaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -125,7 +117,6 @@ class TapparellaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self._ha_url = None
 
     async def async_step_user(self, user_input=None):
-        """Step 1: scegli dispositivo Shelly e nome."""
         errors = {}
         shelly_covers = _get_shelly_covers(self.hass)
 
@@ -148,17 +139,12 @@ class TapparellaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required("ip"): str,
             })
 
-        return self.async_show_form(
-            step_id="user",
-            data_schema=schema,
-            errors=errors,
-        )
+        return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
 
     async def async_step_configure(self, user_input=None):
-        """Step 2: configura input, area e URL HA."""
         errors = {}
         areas = _get_areas(self.hass)
-        internal_url = _get_internal_url(self.hass)
+        default_url = _guess_ha_url(self._ip)
 
         if user_input is not None:
             self._input_salita = int(user_input["input_salita"])
@@ -166,13 +152,13 @@ class TapparellaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self._ha_url = user_input["ha_url"].rstrip("/")
             return await self.async_step_finish()
 
-        area_names = list(areas.keys())
         schema_dict = {
             vol.Required("input_salita", default=0): vol.In([0, 1]),
         }
+        area_names = list(areas.keys())
         if area_names:
             schema_dict[vol.Optional("area")] = vol.In(area_names)
-        schema_dict[vol.Required("ha_url", default=internal_url)] = str
+        schema_dict[vol.Required("ha_url", default=default_url)] = str
 
         return self.async_show_form(
             step_id="configure",
@@ -181,10 +167,9 @@ class TapparellaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_finish(self, user_input=None):
-        """Step 3: configura automaticamente le azioni sullo Shelly e crea entry."""
         ip_s = ip_slug(self._ip)
+        _LOGGER.error("TLO async_step_finish: ip=%s ip_s=%s ha_url=%s", self._ip, ip_s, self._ha_url)
         await _configure_shelly_actions(self._ip, self._input_salita, self._ha_url, ip_s)
-
         return self.async_create_entry(
             title=self._name,
             data={
