@@ -4,7 +4,7 @@ STATE_OPEN = "open"
 STATE_CLOSED = "closed"
 STATE_TILT = "tilt"
 
-HA_URL = "https://192.168.1.2:8123"
+HA_URL = "https://ea0u0eglo2dfbrtt.myfritz.net:9000"
 
 # Store globale: slug IP -> entita CherubiniCover
 ENTITY_STORE = {}
