@@ -68,7 +68,7 @@ async def _configure_shelly_actions(shelly_ip, input_salita, ha_url, ip_s):
             ) as resp:
                 data = await resp.json()
 
-            hooks = data.get("hooks", [])
+            hooks = data.get("result", data).get("hooks", [])
             _LOGGER.error("TLO: trovati %d hook", len(hooks))
 
             for hook in hooks:
