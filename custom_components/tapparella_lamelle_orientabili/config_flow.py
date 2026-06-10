@@ -54,36 +54,59 @@ def _get_internal_url(hass):
 
 
 async def _configure_shelly_actions(shelly_ip, input_salita, ha_url, ip_s):
-    """Aggiunge le URL actions sullo Shelly via RPC senza toccare quelle esistenti."""
+    """Aggiunge gli URL HA agli webhook esistenti sullo Shelly via Webhook.Update."""
     input_discesa = 1 if input_salita == 0 else 0
 
-    actions = [
-        {"cid": input_salita, "event": "input.btn_up", "url": f"{ha_url}/api/tapparella/{ip_s}/su"},
-        {"cid": input_discesa, "event": "input.btn_up", "url": f"{ha_url}/api/tapparella/{ip_s}/giu"},
-        {"cid": input_discesa, "event": "input.btn_down", "url": f"{ha_url}/api/tapparella/{ip_s}/lamelle"},
-    ]
+    # Mappa evento -> (cid, url_ha)
+    event_map = {
+        "input.button_push": {
+            input_salita: f"{ha_url}/api/tapparella/{ip_s}/su",
+            input_discesa: f"{ha_url}/api/tapparella/{ip_s}/giu",
+        },
+        "input.button_longpush": {
+            input_discesa: f"{ha_url}/api/tapparella/{ip_s}/lamelle",
+        },
+    }
 
     try:
         async with aiohttp.ClientSession() as session:
-            for action in actions:
-                payload = {
-                    "id": 1,
-                    "method": "Webhook.Create",
-                    "params": {
-                        "cid": action["cid"],
-                        "enable": True,
-                        "event": action["event"],
-                        "urls": [action["url"]],
-                        "ssl_ca": "*",
+            # Leggi gli hook esistenti
+            async with session.post(
+                f"http://{shelly_ip}/rpc",
+                json={"id": 1, "method": "Webhook.List"},
+                timeout=aiohttp.ClientTimeout(total=5)
+            ) as resp:
+                data = await resp.json()
+
+            hooks = data.get("hooks", [])
+
+            for hook in hooks:
+                hook_cid = hook.get("cid")
+                hook_event = hook.get("event")
+                hook_id = hook.get("id")
+                existing_urls = hook.get("urls", [])
+
+                # Controlla se questo hook corrisponde a uno dei nostri eventi
+                url_to_add = event_map.get(hook_event, {}).get(hook_cid)
+                if url_to_add and url_to_add not in existing_urls:
+                    new_urls = existing_urls + [url_to_add]
+                    payload = {
+                        "id": 1,
+                        "method": "Webhook.Update",
+                        "params": {
+                            "id": hook_id,
+                            "urls": new_urls,
+                            "ssl_ca": "*",
+                        }
                     }
-                }
-                async with session.post(
-                    f"http://{shelly_ip}/rpc",
-                    json=payload,
-                    timeout=aiohttp.ClientTimeout(total=5)
-                ) as resp:
-                    result = await resp.json()
-                    _LOGGER.debug("Webhook.Create response: %s", result)
+                    async with session.post(
+                        f"http://{shelly_ip}/rpc",
+                        json=payload,
+                        timeout=aiohttp.ClientTimeout(total=5)
+                    ) as resp:
+                        result = await resp.json()
+                        _LOGGER.debug("Webhook.Update response: %s", result)
+
     except Exception as err:
         _LOGGER.warning("Errore configurazione azioni Shelly: %s", err)
 
