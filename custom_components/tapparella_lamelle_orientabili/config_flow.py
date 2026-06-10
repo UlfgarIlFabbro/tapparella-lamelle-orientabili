@@ -40,10 +40,10 @@ def _get_areas(hass):
 def _get_internal_url(hass):
     """Restituisce l'URL interno di HA."""
     try:
-        return get_url(hass, allow_internal=True, allow_external=False)
+        return get_url(hass, prefer_external=False, allow_external=False)
     except NoURLAvailableError:
         try:
-            return get_url(hass, allow_internal=False, allow_external=True)
+            return get_url(hass, prefer_external=True)
         except NoURLAvailableError:
             return "https://192.168.1.2:8123"
 
