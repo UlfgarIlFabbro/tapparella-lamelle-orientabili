@@ -3,15 +3,21 @@
     "step": {
       "user": {
         "title": "Configure Cover",
+        "description": "Select the Shelly device that controls this cover and give it a name.",
         "data": {
           "name": "Name",
-          "shelly_device": "Shelly Device",
+          "shelly_device": "Shelly Device (cover)",
           "ip": "Shelly IP Address"
         }
       },
-      "webhook": {
-        "title": "Configure Shelly Actions",
-        "description": "Add these URLs in your Shelly device under Actions > URL Actions:\n\n**Button UP — single push:**\n{url_su}\n\n**Button DOWN — single push:**\n{url_giu}\n\n**Button DOWN — long push (slats):**\n{url_lamelle}\n\nClick SUBMIT to complete setup."
+      "configure": {
+        "title": "Configure Inputs",
+        "description": "Specify which Shelly input channel controls the UP movement (the DOWN channel and tilt will be derived automatically).\n\nA URL action will be **added** to each input to keep Home Assistant state in sync when the physical button is pressed. Existing actions will not be modified.\n\nThe Home Assistant URL must be reachable from the Shelly device (local network recommended).",
+        "data": {
+          "input_salita": "UP input channel (0 or 1)",
+          "area": "Area (optional)",
+          "ha_url": "Home Assistant URL"
+        }
       }
     },
     "error": {},
