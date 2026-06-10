@@ -68,6 +68,7 @@ async def _configure_shelly_actions(shelly_ip, input_salita, ha_url, ip_s):
         },
     }
 
+    _LOGGER.error("TLO: avvio configurazione Shelly %s, input_salita=%s, ha_url=%s", shelly_ip, input_salita, ha_url)
     try:
         async with aiohttp.ClientSession() as session:
             # Leggi gli hook esistenti
@@ -79,6 +80,7 @@ async def _configure_shelly_actions(shelly_ip, input_salita, ha_url, ip_s):
                 data = await resp.json()
 
             hooks = data.get("hooks", [])
+            _LOGGER.error("TLO: trovati %d hook: %s", len(hooks), [h.get('id') for h in hooks])
 
             for hook in hooks:
                 hook_cid = hook.get("cid")
@@ -108,7 +110,7 @@ async def _configure_shelly_actions(shelly_ip, input_salita, ha_url, ip_s):
                         _LOGGER.debug("Webhook.Update response: %s", result)
 
     except Exception as err:
-        _LOGGER.warning("Errore configurazione azioni Shelly: %s", err)
+        _LOGGER.error("Errore configurazione azioni Shelly: %s", err, exc_info=True)
 
 
 class TapparellaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
