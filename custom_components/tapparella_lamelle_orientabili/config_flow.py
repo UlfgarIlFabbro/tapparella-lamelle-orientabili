@@ -3,7 +3,7 @@ import aiohttp
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.helpers import entity_registry as er, area_registry as ar
-from homeassistant.helpers.network import get_url, NoURLAvailableError
+import socket
 
 from .const import DOMAIN, ip_slug
 
@@ -38,14 +38,19 @@ def _get_areas(hass):
 
 
 def _get_internal_url(hass):
-    """Restituisce l'URL interno di HA."""
+    """Ricava l'IP locale di HA tramite socket e restituisce l'URL interno."""
     try:
-        return get_url(hass, prefer_external=False, allow_external=False)
-    except NoURLAvailableError:
-        try:
-            return get_url(hass, prefer_external=True)
-        except NoURLAvailableError:
-            return "https://192.168.1.2:8123"
+        # Apre una connessione UDP verso un IP esterno per ricavare l'IP locale
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+        # Usa la porta di HA (8123 di default)
+        port = hass.config.api.port if hass.config.api else 8123
+        scheme = "https" if hass.config.api and hass.config.api.use_ssl else "http"
+        return f"{scheme}://{local_ip}:{port}"
+    except Exception:
+        return "https://192.168.1.2:8123"
 
 
 async def _configure_shelly_actions(shelly_ip, input_salita, ha_url, ip_s):
