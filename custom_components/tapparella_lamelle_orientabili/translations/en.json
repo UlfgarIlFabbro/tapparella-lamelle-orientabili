@@ -2,27 +2,27 @@
   "config": {
     "step": {
       "user": {
-        "title": "Configure Cover",
-        "description": "Select the Shelly device that controls this cover and give it a name.",
+        "title": "Configura Tapparella",
+        "description": "Seleziona il dispositivo Shelly che controlla questa tapparella e dagli un nome.",
         "data": {
-          "name": "Name",
-          "shelly_device": "Shelly Device (cover)",
-          "ip": "Shelly IP Address"
+          "name": "Nome",
+          "shelly_device": "Dispositivo Shelly (cover)",
+          "ip": "Indirizzo IP Shelly"
         }
       },
       "configure": {
-        "title": "Configure Inputs",
-        "description": "Specify which Shelly input channel controls the UP movement (the DOWN channel and tilt will be derived automatically).\n\nA URL action will be **added** to each input to keep Home Assistant state in sync when the physical button is pressed. Existing actions will not be modified.\n\nThe Home Assistant URL must be reachable from the Shelly device (local network recommended).",
+        "title": "Configura ingressi e sincronizzazione",
+        "description": "Specifica quale canale di ingresso controlla la **salita** (il canale discesa e le lamelle vengono ricavati automaticamente).\n\nVerrà aggiunta un'azione URL a ciascun ingresso per mantenere sincronizzato lo stato in Home Assistant quando si preme il pulsante fisico. Le azioni già presenti non verranno modificate.\n\nL'URL di Home Assistant deve essere raggiungibile dal dispositivo Shelly (rete locale consigliata).",
         "data": {
-          "input_salita": "UP input channel (0 or 1)",
-          "area": "Area (optional)",
-          "ha_url": "Home Assistant URL"
+          "input_salita": "Canale ingresso SALITA (0 o 1)",
+          "area": "Area (opzionale)",
+          "ha_url": "URL Home Assistant"
         }
       }
     },
     "error": {},
     "abort": {
-      "already_configured": "Device already configured"
+      "already_configured": "Dispositivo già configurato"
     }
   }
 }
