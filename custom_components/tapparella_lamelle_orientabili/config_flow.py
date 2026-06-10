@@ -3,8 +3,9 @@ import aiohttp
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.helpers import entity_registry as er, area_registry as ar
+from homeassistant.helpers.network import get_url, NoURLAvailableError
 
-from .const import DOMAIN, HA_URL, ip_slug
+from .const import DOMAIN, ip_slug
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,26 +37,25 @@ def _get_areas(hass):
     return {area.name: area.id for area in area_reg.async_list_areas()}
 
 
+def _get_internal_url(hass):
+    """Restituisce l'URL interno di HA."""
+    try:
+        return get_url(hass, prefer_internal=True, allow_external=False)
+    except NoURLAvailableError:
+        try:
+            return get_url(hass, prefer_internal=False, allow_external=True)
+        except NoURLAvailableError:
+            return "https://192.168.1.2:8123"
+
+
 async def _configure_shelly_actions(shelly_ip, input_salita, ha_url, ip_s):
     """Aggiunge le URL actions sullo Shelly via RPC senza toccare quelle esistenti."""
     input_discesa = 1 if input_salita == 0 else 0
 
     actions = [
-        {
-            "input_id": input_salita,
-            "event": "btn_up",
-            "url": f"{ha_url}/api/tapparella/{ip_s}/su",
-        },
-        {
-            "input_id": input_discesa,
-            "event": "btn_up",
-            "url": f"{ha_url}/api/tapparella/{ip_s}/giu",
-        },
-        {
-            "input_id": input_discesa,
-            "event": "btn_down",
-            "url": f"{ha_url}/api/tapparella/{ip_s}/lamelle",
-        },
+        {"cid": input_salita, "event": "input.btn_up", "url": f"{ha_url}/api/tapparella/{ip_s}/su"},
+        {"cid": input_discesa, "event": "input.btn_up", "url": f"{ha_url}/api/tapparella/{ip_s}/giu"},
+        {"cid": input_discesa, "event": "input.btn_down", "url": f"{ha_url}/api/tapparella/{ip_s}/lamelle"},
     ]
 
     try:
@@ -65,9 +65,9 @@ async def _configure_shelly_actions(shelly_ip, input_salita, ha_url, ip_s):
                     "id": 1,
                     "method": "Webhook.Create",
                     "params": {
-                        "cid": action["input_id"],
+                        "cid": action["cid"],
                         "enable": True,
-                        "event": f"input.{action['event']}",
+                        "event": action["event"],
                         "urls": [action["url"]],
                         "ssl_ca": "*",
                     }
@@ -128,24 +128,25 @@ class TapparellaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Step 2: configura input, area e URL HA."""
         errors = {}
         areas = _get_areas(self.hass)
-        area_options = {v: k for k, v in areas.items()}
+        internal_url = _get_internal_url(self.hass)
 
         if user_input is not None:
-            self._input_salita = user_input["input_salita"]
-            self._area_id = areas.get(user_input["area"]) if user_input.get("area") else None
+            self._input_salita = int(user_input["input_salita"])
+            self._area_id = areas.get(user_input.get("area"))
             self._ha_url = user_input["ha_url"].rstrip("/")
             return await self.async_step_finish()
 
         area_names = list(areas.keys())
-        schema = vol.Schema({
+        schema_dict = {
             vol.Required("input_salita", default=0): vol.In([0, 1]),
-            vol.Optional("area"): vol.In(area_names) if area_names else str,
-            vol.Required("ha_url", default=HA_URL): str,
-        })
+        }
+        if area_names:
+            schema_dict[vol.Optional("area")] = vol.In(area_names)
+        schema_dict[vol.Required("ha_url", default=internal_url)] = str
 
         return self.async_show_form(
             step_id="configure",
-            data_schema=schema,
+            data_schema=vol.Schema(schema_dict),
             errors=errors,
         )
 
@@ -154,20 +155,13 @@ class TapparellaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         ip_s = ip_slug(self._ip)
         await _configure_shelly_actions(self._ip, self._input_salita, self._ha_url, ip_s)
 
-        entry = self.async_create_entry(
+        return self.async_create_entry(
             title=self._name,
             data={
                 "name": self._name,
                 "ip": self._ip,
                 "input_salita": self._input_salita,
                 "ha_url": self._ha_url,
+                "area_id": self._area_id,
             },
         )
-
-        # Associa all'area se selezionata
-        if self._area_id:
-            entity_registry = er.async_get(self.hass)
-            # L'associazione area viene fatta dopo la creazione entry
-            # tramite hass.data o post-setup
-
-        return entry
