@@ -19,7 +19,6 @@ class CherubiniCover(CoverEntity):
         CoverEntityFeature.OPEN
         | CoverEntityFeature.CLOSE
         | CoverEntityFeature.OPEN_TILT
-        | CoverEntityFeature.SET_POSITION
     )
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry):
@@ -39,10 +38,6 @@ class CherubiniCover(CoverEntity):
         if self._state == STATE_TILT:
             return None
         return self._state == STATE_CLOSED
-
-    @property
-    def current_cover_position(self) -> int:
-        return 0 if self._state == STATE_CLOSED else 100
 
     @property
     def current_cover_tilt_position(self) -> int:
