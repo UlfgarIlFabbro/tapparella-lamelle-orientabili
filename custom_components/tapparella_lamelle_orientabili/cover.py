@@ -34,10 +34,8 @@ class CherubiniCover(CoverEntity):
         return self._name
 
     @property
-    def is_closed(self) -> bool | None:
-        if self._state == STATE_TILT:
-            return None
-        return self._state == STATE_CLOSED
+    def is_closed(self) -> bool:
+        return self._state in (STATE_CLOSED, STATE_TILT)
 
     @property
     def current_cover_tilt_position(self) -> int:
