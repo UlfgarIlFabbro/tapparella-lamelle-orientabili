@@ -35,7 +35,13 @@ class CherubiniCover(CoverEntity):
 
     @property
     def is_closed(self) -> bool:
-        return self._state in (STATE_CLOSED, STATE_TILT)
+        return self._state == STATE_CLOSED
+
+    @property
+    def assumed_state(self) -> bool:
+        # Quando le lamelle sono aperte, salita e discesa restano sempre
+        # cliccabili indipendentemente da is_closed.
+        return self._state == STATE_TILT
 
     @property
     def current_cover_tilt_position(self) -> int:
