@@ -39,7 +39,9 @@ class CherubiniCover(CoverEntity):
 
     @property
     def current_cover_position(self) -> int:
-        return 0 if self._state == STATE_CLOSED else 100
+        if self._state == STATE_OPEN:
+            return 100
+        return 0
 
     @property
     def assumed_state(self) -> bool:
