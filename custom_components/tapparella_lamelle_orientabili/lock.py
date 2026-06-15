@@ -11,6 +11,14 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class TapparellaLamelleLock(LockEntity):
+    """Lock per controllare le lamelle via Google Home.
+
+    - locked:   tapparella alzata (STATE_OPEN) o lamelle chiuse (STATE_CLOSED)
+    - unlocked: lamelle aperte (STATE_TILT)
+
+    Sempre disponibile — mai unavailable.
+    """
+
     _attr_icon = "mdi:blinds"
 
     def __init__(self, entry: ConfigEntry, cover_entity):
@@ -20,20 +28,20 @@ class TapparellaLamelleLock(LockEntity):
         self._attr_unique_id = f"tlo_{ip_slug(entry.data['ip'])}_lock"
 
     @property
-    def is_locked(self) -> bool | None:
-        if self._cover._state == STATE_OPEN:
-            return None
-        return self._cover._state == STATE_CLOSED
+    def is_locked(self) -> bool:
+        return self._cover._state != STATE_TILT
 
     @property
     def available(self) -> bool:
-        return self._cover._state != STATE_OPEN
+        return True
 
     async def async_lock(self, **kwargs):
+        """Chiudi la tapparella."""
         await self._cover.async_close_cover()
         self.async_write_ha_state()
 
     async def async_unlock(self, **kwargs):
+        """Apri le lamelle."""
         await self._cover.async_open_cover_tilt()
         self.async_write_ha_state()
 
