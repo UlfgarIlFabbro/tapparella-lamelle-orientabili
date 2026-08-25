@@ -53,9 +53,6 @@ async def _configure_shelly_actions(shelly_ip, input_salita, ha_url, ip_s):
         },
     }
 
-    _LOGGER.error("TLO SHELLY CONFIG START: ip=%s input_salita=%s ha_url=%s ip_s=%s",
-                  shelly_ip, input_salita, ha_url, ip_s)
-
     try:
         timeout = aiohttp.ClientTimeout(total=10)
         async with aiohttp.ClientSession(timeout=timeout) as session:
@@ -66,7 +63,6 @@ async def _configure_shelly_actions(shelly_ip, input_salita, ha_url, ip_s):
                 data = await resp.json()
 
             hooks = data.get("result", data).get("hooks", [])
-            _LOGGER.error("TLO: trovati %d hook", len(hooks))
 
             for hook in hooks:
                 hook_cid = hook.get("cid")
@@ -75,31 +71,18 @@ async def _configure_shelly_actions(shelly_ip, input_salita, ha_url, ip_s):
                 existing_urls = list(hook.get("urls", []))
 
                 url_to_add = event_map.get(hook_event, {}).get(hook_cid)
-                _LOGGER.error("TLO: hook id=%s event=%s cid=%s url_to_add=%s",
-                              hook_id, hook_event, hook_cid, url_to_add)
-
                 if url_to_add and url_to_add not in existing_urls:
                     new_urls = existing_urls + [url_to_add]
                     payload = {
                         "id": 1,
                         "method": "Webhook.Update",
-                        "params": {
-                            "id": hook_id,
-                            "urls": new_urls,
-                            "ssl_ca": "*",
-                        }
+                        "params": {"id": hook_id, "urls": new_urls, "ssl_ca": "*"},
                     }
-                    async with session.post(
-                        f"http://{shelly_ip}/rpc",
-                        json=payload,
-                    ) as resp:
-                        result = await resp.json()
-                        _LOGGER.error("TLO: Webhook.Update id=%s result=%s", hook_id, result)
-
-        _LOGGER.error("TLO SHELLY CONFIG END: completato")
+                    async with session.post(f"http://{shelly_ip}/rpc", json=payload) as resp:
+                        await resp.json()
 
     except Exception as err:
-        _LOGGER.error("TLO ERRORE: %s", err, exc_info=True)
+        _LOGGER.error("TLO ERRORE configurazione Shelly: %s", err, exc_info=True)
 
 
 class TapparellaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -119,10 +102,7 @@ class TapparellaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             self._name = user_input["name"]
-            if shelly_covers:
-                self._ip = shelly_covers[user_input["shelly_device"]]
-            else:
-                self._ip = user_input["ip"]
+            self._ip = shelly_covers[user_input["shelly_device"]] if shelly_covers else user_input["ip"]
             return await self.async_step_configure()
 
         if shelly_covers:
@@ -149,9 +129,7 @@ class TapparellaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             self._ha_url = user_input["ha_url"].rstrip("/")
             return await self.async_step_finish()
 
-        schema_dict = {
-            vol.Required("input_salita", default=0): vol.In([0, 1]),
-        }
+        schema_dict = {vol.Required("input_salita", default=0): vol.In([0, 1])}
         area_names = list(areas.keys())
         if area_names:
             schema_dict[vol.Optional("area")] = vol.In(area_names)
@@ -165,7 +143,6 @@ class TapparellaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_finish(self, user_input=None):
         ip_s = ip_slug(self._ip)
-        _LOGGER.error("TLO async_step_finish: ip=%s ip_s=%s ha_url=%s", self._ip, ip_s, self._ha_url)
         await _configure_shelly_actions(self._ip, self._input_salita, self._ha_url, ip_s)
         return self.async_create_entry(
             title=self._name,

@@ -1,5 +1,4 @@
 """Costanti per Tapparella Lamelle Orientabili."""
-
 DOMAIN = "tapparella_lamelle_orientabili"
 
 STATE_OPEN = "open"

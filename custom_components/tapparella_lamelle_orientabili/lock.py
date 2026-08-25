@@ -5,17 +5,13 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN, ENTITY_STORE, STATE_TILT, ip_slug
+from .const import ENTITY_STORE, STATE_TILT, ip_slug
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class TapparellaLamelleLock(LockEntity):
-    """Lock per controllare le lamelle via Google Home.
-
-    - locked:   tapparella alzata o lamelle chiuse
-    - unlocked: lamelle aperte
-    """
+    """Lock lamelle: locked=chiuse, unlocked=aperte. Sempre disponibile."""
 
     _attr_icon = "mdi:blinds"
 
