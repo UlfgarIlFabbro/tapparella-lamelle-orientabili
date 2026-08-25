@@ -5,7 +5,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN, ENTITY_STORE, STATE_OPEN, STATE_CLOSED, STATE_TILT, ip_slug
+from .const import DOMAIN, ENTITY_STORE, STATE_TILT, ip_slug
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -13,10 +13,8 @@ _LOGGER = logging.getLogger(__name__)
 class TapparellaLamelleLock(LockEntity):
     """Lock per controllare le lamelle via Google Home.
 
-    - locked:   tapparella alzata (STATE_OPEN) o lamelle chiuse (STATE_CLOSED)
-    - unlocked: lamelle aperte (STATE_TILT)
-
-    Sempre disponibile — mai unavailable.
+    - locked:   tapparella alzata o lamelle chiuse
+    - unlocked: lamelle aperte
     """
 
     _attr_icon = "mdi:blinds"
@@ -33,15 +31,13 @@ class TapparellaLamelleLock(LockEntity):
 
     @property
     def available(self) -> bool:
-        return True
+        return self._cover._available
 
     async def async_lock(self, **kwargs):
-        """Chiudi la tapparella."""
         await self._cover.async_close_cover()
         self.async_write_ha_state()
 
     async def async_unlock(self, **kwargs):
-        """Apri le lamelle."""
         await self._cover.async_open_cover_tilt()
         self.async_write_ha_state()
 

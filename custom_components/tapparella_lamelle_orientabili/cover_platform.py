@@ -1,24 +1,9 @@
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+"""Piattaforma cover per Tapparella Lamelle Orientabili."""
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN
-from .cover import CherubiniCover
+from .cover import async_setup_entry as _setup
 
-
-async def async_setup_entry(
-    hass: HomeAssistant,
-    entry: ConfigEntry,
-    async_add_entities: AddEntitiesCallback
-):
-
-    data = entry.data
-
-    entity = CherubiniCover(
-        hass,
-        data["name"],
-        data["cover_entity"],
-        data.get("ip")
-    )
-
-    async_add_entities([entity])
+async def async_setup_entry(hass, entry, async_add_entities):
+    await _setup(hass, entry, async_add_entities)

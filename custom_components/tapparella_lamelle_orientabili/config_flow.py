@@ -1,3 +1,4 @@
+"""Config flow per Tapparella Lamelle Orientabili."""
 import logging
 import aiohttp
 import voluptuous as vol
@@ -32,7 +33,6 @@ def _get_areas(hass):
 
 
 def _guess_ha_url(shelly_ip):
-    """Ricava un URL HA plausibile dallo stesso subnet dello Shelly."""
     parts = shelly_ip.split(".")
     if len(parts) == 4:
         return f"https://{parts[0]}.{parts[1]}.{parts[2]}.2:8123"
@@ -42,9 +42,6 @@ def _guess_ha_url(shelly_ip):
 async def _configure_shelly_actions(shelly_ip, input_salita, ha_url, ip_s):
     """Aggiunge gli URL HA agli webhook esistenti sullo Shelly via Webhook.Update."""
     input_discesa = 1 if input_salita == 0 else 0
-
-    _LOGGER.error("TLO SHELLY CONFIG START: ip=%s input_salita=%s ha_url=%s ip_s=%s",
-                  shelly_ip, input_salita, ha_url, ip_s)
 
     event_map = {
         "input.button_push": {
@@ -56,12 +53,12 @@ async def _configure_shelly_actions(shelly_ip, input_salita, ha_url, ip_s):
         },
     }
 
+    _LOGGER.error("TLO SHELLY CONFIG START: ip=%s input_salita=%s ha_url=%s ip_s=%s",
+                  shelly_ip, input_salita, ha_url, ip_s)
+
     try:
         timeout = aiohttp.ClientTimeout(total=10)
         async with aiohttp.ClientSession(timeout=timeout) as session:
-
-            # Leggi gli hook esistenti
-            _LOGGER.error("TLO: chiamata Webhook.List a %s", shelly_ip)
             async with session.post(
                 f"http://{shelly_ip}/rpc",
                 json={"id": 1, "method": "Webhook.List"},

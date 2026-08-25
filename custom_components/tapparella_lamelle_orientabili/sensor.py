@@ -23,8 +23,6 @@ BUTTON_LABELS = {
 
 
 class TapparellaStatoSensor(SensorEntity):
-    """Sensore che mostra lo stato della tapparella in italiano."""
-
     _attr_icon = "mdi:blinds"
 
     def __init__(self, entry: ConfigEntry, cover_entity):
@@ -32,6 +30,10 @@ class TapparellaStatoSensor(SensorEntity):
         self._cover = cover_entity
         self._attr_name = f"{entry.data['name']} Stato"
         self._attr_unique_id = f"tlo_{ip_slug(entry.data['ip'])}_stato"
+
+    @property
+    def available(self) -> bool:
+        return self._cover._available
 
     @property
     def native_value(self):
@@ -43,8 +45,6 @@ class TapparellaStatoSensor(SensorEntity):
 
 
 class TapparellaUltimoPulsanteSensor(SensorEntity):
-    """Sensore che mostra l'ultimo pulsante premuto."""
-
     _attr_icon = "mdi:gesture-tap-button"
 
     def __init__(self, entry: ConfigEntry, cover_entity):
@@ -54,13 +54,15 @@ class TapparellaUltimoPulsanteSensor(SensorEntity):
         self._attr_unique_id = f"tlo_{ip_slug(entry.data['ip'])}_ultimo_pulsante"
 
     @property
+    def available(self) -> bool:
+        return self._cover._available
+
+    @property
     def native_value(self):
         return BUTTON_LABELS.get(self._cover._state, "Nessuno")
 
 
 class TapparellaIPSensor(SensorEntity):
-    """Sensore che mostra l'indirizzo IP dello Shelly."""
-
     _attr_icon = "mdi:ip-network"
 
     def __init__(self, entry: ConfigEntry):
@@ -78,16 +80,12 @@ async def async_setup_entry(
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Attendi che la cover entity sia disponibile nell'ENTITY_STORE."""
     ip_s = ip_slug(entry.data["ip"])
     cover_entity = ENTITY_STORE.get(ip_s)
-
     entities = [TapparellaIPSensor(entry)]
-
     if cover_entity is not None:
         entities.append(TapparellaStatoSensor(entry, cover_entity))
         entities.append(TapparellaUltimoPulsanteSensor(entry, cover_entity))
     else:
         _LOGGER.warning("TLO sensor: cover entity non trovata per %s", ip_s)
-
     async_add_entities(entities, update_before_add=False)
