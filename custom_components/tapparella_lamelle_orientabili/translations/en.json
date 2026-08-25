@@ -1,1 +1,22 @@
-Host not in allowlist: raw.githubusercontent.com. Add this host to your network egress settings to allow access.
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configure Shutter",
+        "data": {
+          "name": "Name",
+          "shelly_device": "Shelly device",
+          "ip": "Shelly IP address"
+        }
+      },
+      "configure": {
+        "title": "Settings",
+        "data": {
+          "input_salita": "UP input channel (0 or 1)",
+          "area": "Area",
+          "ha_url": "Home Assistant URL"
+        }
+      }
+    }
+  }
+}
