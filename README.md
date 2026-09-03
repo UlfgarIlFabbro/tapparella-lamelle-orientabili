@@ -162,9 +162,9 @@ in modo da distinguere correttamente una tapparella completamente aperta da una 
 
 ## Versione
 
-**1.4.0**
+**1.4.1**
 
-### Novità della versione 1.4.0
+### Novità della versione 1.4.1
 
 - Gestione automatica di più tapparelle
 - Aggiunti servizi `open_all`, `close_all` e `open_all_tilt`

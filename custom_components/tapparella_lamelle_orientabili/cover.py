@@ -100,16 +100,20 @@ class CherubiniCover(CoverEntity):
         self.async_write_ha_state()
 
     async def async_open_cover(self, **kwargs):
-        await self._shelly_call("roller/0?go=open")
-        self._state = STATE_OPEN
-        self._save_state()
-        self.async_write_ha_state()
+        if await self._shelly_call("roller/0?go=open"):
+            self._state = STATE_OPEN
+            self._save_state()
+            self.async_write_ha_state()
+        else:
+            self.async_write_ha_state()
 
     async def async_close_cover(self, **kwargs):
-        await self._shelly_call("roller/0?go=close&duration=1")
-        self._state = STATE_CLOSED
-        self._save_state()
-        self.async_write_ha_state()
+        if await self._shelly_call("roller/0?go=close&duration=1"):
+            self._state = STATE_CLOSED
+            self._save_state()
+            self.async_write_ha_state()
+        else:
+            self.async_write_ha_state()
 
     def _toggle_lamelle_state(self):
         """Aggiorna lo stato dopo il comando fisico lamelle.
@@ -133,20 +137,30 @@ class CherubiniCover(CoverEntity):
         if self._state == STATE_TILT:
             return
 
-        await self._shelly_call("roller/0?go=close")
-        self._state = STATE_TILT
-        self._save_state()
-        self.async_write_ha_state()
+        if await self._shelly_call("roller/0?go=close"):
+            self._state = STATE_TILT
+            self._save_state()
+            self.async_write_ha_state()
+        else:
+            self.async_write_ha_state()
 
-    async def _shelly_call(self, path: str):
+    async def _shelly_call(self, path: str) -> bool:
+        """Esegue un comando sullo Shelly e restituisce True solo se accettato."""
         url = f"http://{self._ip}/{path}"
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url, timeout=aiohttp.ClientTimeout(total=5)) as resp:
+            timeout = aiohttp.ClientTimeout(total=5)
+            async with aiohttp.ClientSession(timeout=timeout) as session:
+                async with session.get(url) as resp:
                     if resp.status != 200:
+                        self._available = False
                         _LOGGER.warning("Shelly risponde %s per %s", resp.status, url)
+                        return False
+                    self._available = True
+                    return True
         except Exception as err:
+            self._available = False
             _LOGGER.error("Errore chiamata Shelly %s: %s", url, err)
+            return False
 
 
 async def async_setup_entry(

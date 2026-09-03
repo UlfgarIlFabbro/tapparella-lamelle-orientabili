@@ -75,19 +75,19 @@ async def _register_services(hass: HomeAssistant) -> None:
         DOMAIN,
         "open_all",
         _service_open_all,
-        schema=cv.empty_config_schema,
+        schema={},
     )
     hass.services.async_register(
         DOMAIN,
         "close_all",
         _service_close_all,
-        schema=cv.empty_config_schema,
+        schema={},
     )
     hass.services.async_register(
         DOMAIN,
         "open_all_tilt",
         _service_open_all_tilt,
-        schema=cv.empty_config_schema,
+        schema={},
     )
     _SERVICES_REGISTERED = True
 
