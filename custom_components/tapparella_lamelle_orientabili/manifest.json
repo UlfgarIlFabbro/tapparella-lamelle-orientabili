@@ -1,11 +1,13 @@
 {
   "domain": "tapparella_lamelle_orientabili",
   "name": "Tapparella Lamelle Orientabili",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "config_flow": true,
   "documentation": "https://github.com/UlfgarIlFabbro/tapparella-lamelle-orientabili",
   "issue_tracker": "https://github.com/UlfgarIlFabbro/tapparella-lamelle-orientabili/issues",
-  "codeowners": ["@UlfgarIlFabbro"],
+  "codeowners": [
+    "@UlfgarIlFabbro"
+  ],
   "iot_class": "local_polling",
   "integration_type": "device",
   "icon": "mdi:blinds"

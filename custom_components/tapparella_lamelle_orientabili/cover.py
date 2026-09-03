@@ -34,6 +34,10 @@ class CherubiniCover(CoverEntity):
         self._state = entry.data.get("state", STATE_CLOSED)
         self._attr_unique_id = f"tlo_{ip_slug(self._ip)}"
         self._attr_name = self._name
+        self._attr_extra_state_attributes = {
+            "tlo": True,
+            "tlo_slug": ip_slug(self._ip),
+        }
         self._available = True
 
     @property
@@ -91,7 +95,7 @@ class CherubiniCover(CoverEntity):
         elif action == "giu":
             self._state = STATE_CLOSED
         elif action == "lamelle":
-            self._state = STATE_TILT
+            self._toggle_lamelle_state()
         self._save_state()
         self.async_write_ha_state()
 
@@ -107,7 +111,28 @@ class CherubiniCover(CoverEntity):
         self._save_state()
         self.async_write_ha_state()
 
+    def _toggle_lamelle_state(self):
+        """Aggiorna lo stato dopo il comando fisico lamelle.
+
+        Il motore Cherubini usa lo stesso comando per alternare la posizione
+        delle lamelle: OPEN -> TILT e TILT -> CLOSED. Da CLOSED, il comando
+        riporta invece alla posizione TILT (lamelle aperte).
+        """
+        if self._state == STATE_TILT:
+            self._state = STATE_CLOSED
+        else:
+            self._state = STATE_TILT
+
     async def async_open_cover_tilt(self, **kwargs):
+        """Porta la tapparella in modo assoluto a TILT.
+
+        Questo comando NON è un toggle: se le lamelle sono già aperte
+        (TILT) non invia alcun comando al motore. È quindi sicuro anche
+        quando viene usato su un gruppo di più tapparelle.
+        """
+        if self._state == STATE_TILT:
+            return
+
         await self._shelly_call("roller/0?go=close")
         self._state = STATE_TILT
         self._save_state()

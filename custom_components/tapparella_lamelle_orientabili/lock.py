@@ -20,6 +20,10 @@ class TapparellaLamelleLock(LockEntity):
         self._cover = cover_entity
         self._attr_name = f"{entry.data['name']} Lamelle"
         self._attr_unique_id = f"tlo_{ip_slug(entry.data['ip'])}_lock"
+        self._attr_extra_state_attributes = {
+            "tlo": True,
+            "tlo_slug": ip_slug(entry.data["ip"]),
+        }
 
     @property
     def is_locked(self) -> bool:
@@ -34,6 +38,8 @@ class TapparellaLamelleLock(LockEntity):
         self.async_write_ha_state()
 
     async def async_unlock(self, **kwargs):
+        # Unlock = comando assoluto: se le lamelle sono già aperte
+        # non viene inviato nuovamente il comando al motore.
         await self._cover.async_open_cover_tilt()
         self.async_write_ha_state()
 

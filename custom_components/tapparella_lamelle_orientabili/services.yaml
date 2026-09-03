@@ -1,1 +1,9 @@
-{}
+open_all:
+  name: Apri tutte le tapparelle
+  description: Porta tutte le tapparelle orientabili allo stato aperto con lamelle chiuse.
+close_all:
+  name: Chiudi tutte le tapparelle
+  description: Porta tutte le tapparelle orientabili allo stato chiuso con lamelle chiuse.
+open_all_tilt:
+  name: Apri tutte le lamelle
+  description: Porta tutte le tapparelle orientabili allo stato TILT, con lamelle aperte. Le tapparelle già in TILT non vengono comandate.
