@@ -1,0 +1,892 @@
+{
+  "selector": {
+    "profile": {
+      "options": {
+        "bilanciato": "Balanced",
+        "aggressivo": "Aggressive",
+        "delicato": "Gentle",
+        "personalizzato": "Custom"
+      }
+    },
+    "config_mode": {
+      "options": {
+        "semplificato": "🟢 Simple",
+        "semplificato_fv": "🔵 Simple with solar",
+        "completo": "⚙️ Full"
+      }
+    },
+    "power_limit_mode": {
+      "options": {
+        "unico": "🔵 Single AC on circuit",
+        "multiplo": "🟢 Multiple AC on same circuit"
+      }
+    }
+  },
+  "config": {
+    "step": {
+      "user": {
+        "title": "Smart Thermostat — Choose mode",
+        "description": "Choose how you want to configure the thermostat. You can change the mode at any time from options.",
+        "data": {
+          "config_mode": "Configuration mode"
+        },
+        "data_description": {
+          "config_mode": "🟢 SIMPLE — Just a few essential fields. Set the AC, the desired temperature for day and night, and which alerts to receive. The system handles everything automatically. Ideal for those who want simplicity without giving up intelligent temperature control.\n\n🔵 SIMPLE WITH SOLAR — Like Simple, but adds solar management: the AC turns on when you are producing enough solar energy and turns off when production drops.\n\n⚙️ FULL — Access to all advanced parameters: thermal profiles, sensor calibration, presence boost, separate quiet hours for Google and Telegram, notification limits, and much more. For those who want maximum control over the thermostat behaviour."
+        }
+      },
+      "profilo": {
+        "title": "Regulation profile",
+        "description": "Choose how the thermostat should behave. The profile determines how quickly the system cools and how sensitive it is to temperature changes.",
+        "data": {
+          "profile": "Regulation profile"
+        },
+        "data_description": {
+          "profile": "🔵 BALANCED (recommended) — Turns on at +1.5°C above target, high fan from +2.0°C. Gradual cooling for everyday use.\n\n🔴 AGGRESSIVE — Turns on at +1.2°C, high fan from +1.6°C. Cools faster, ideal for large or sun-exposed rooms.\n\n🟢 GENTLE — Turns on at +1.8°C, high fan from +2.4°C. Quiet and discreet, perfect for sleeping.\n\n⚙️ CUSTOM — Set every threshold manually in the next step."
+        }
+      },
+      "soglie_termiche": {
+        "title": "Custom thermal thresholds",
+        "description": "These parameters precisely control how the thermostat reacts to temperature. Only visible with the Custom profile.",
+        "data": {
+          "target_temp_default": "Initial target temperature (°C)",
+          "extreme_offset": "Extreme heat threshold above target (°C)",
+          "hot_offset": "Strong heat threshold above target (°C)",
+          "range_offset": "Mild heat threshold above target (°C)",
+          "below_offset": "Margin below target to slow down (°C)",
+          "turn_on_offset": "Minimum offset to turn on from solar (°C)",
+          "temp_delta": "Setpoint delta in warm/strong bands (°C)",
+          "extreme_delta": "Setpoint delta in extreme heat band (°C)"
+        },
+        "data_description": {
+          "target_temp_default": "Desired room temperature. Example: 25°C.",
+          "extreme_offset": "Above target + this: max fan and very low setpoint. Example: 2.0°C → extreme heat above 27°C.",
+          "hot_offset": "Above target + this: medium fan and low setpoint. Example: 1.5°C → strong heat between 26.5 and 27°C.",
+          "range_offset": "Above target + this: low fan and slightly reduced setpoint. Example: 0.2°C → mild heat between 25.2 and 26.5°C.",
+          "below_offset": "Below target - this: AC slows down to avoid over-cooling. Example: 0.1°C → slows below 24.9°C.",
+          "turn_on_offset": "Turns on from solar only if room > target + this. Example: 1.5°C → only above 26.5°C.",
+          "temp_delta": "How much the setpoint is lowered in normal bands. Example: 1.0°C → sends 24°C with target 25°C.",
+          "extreme_delta": "How much the setpoint is lowered in extreme heat. Example: 2.0°C → sends 23°C in extreme heat."
+        }
+      },
+      "energia": {
+        "title": "Solar — Automatic turn-on and turn-off",
+        "description": "Configure how the thermostat uses solar production to automatically control the AC. Leave sensors empty to completely disable this feature.",
+        "data": {
+          "fv_sensor": "Solar production sensor (W)",
+          "consumption_sensor": "Grid consumption sensor (W)",
+          "battery_sensor": "Battery state of charge sensor (%)",
+          "fv_margin_w": "Minimum surplus to turn on (W)",
+          "soc_min": "Minimum battery charge to turn on (%)",
+          "fv_start_time": "Automatic turn-on window start",
+          "fv_end_time": "Automatic turn-on window end",
+          "fv_priority": "Turn-on priority (lower number = first)",
+          "fv_stagger_minutes": "Minimum gap between turn-ons/offs (min)",
+          "fv_shutoff_enabled": "▶ Automatic turn-off when solar drops",
+          "fv_shutoff_delay_min": "Consecutive insufficient samples before turning off",
+          "fv_shutoff_threshold": "Solar surplus threshold for turn-off (W)",
+          "fv_shutoff_extra_hours": "Extra hours after window end when it can still turn off"
+        },
+        "data_description": {
+          "fv_sensor": "Watts produced by panels in real time. Example: sensor.solar_panels_total.",
+          "consumption_sensor": "Instantaneous grid consumption. Example: sensor.grid_consumption.",
+          "battery_sensor": "Battery charge percentage. Example: sensor.battery_soc.",
+          "fv_margin_w": "Surplus required above consumption to turn on. Example: 1200W → turns on only if producing 1200W more than consuming.",
+          "soc_min": "Minimum battery charge required to enable turn-on. Example: 70 → turns on only with battery ≥ 70%.",
+          "fv_start_time": "Does not turn on automatically before this time. Example: 10:00.",
+          "fv_end_time": "Does not turn on automatically after this time. Example: 16:00.",
+          "fv_priority": "With multiple thermostats, lower number turns on first and off last. Example: bedroom=10, living=20.",
+          "fv_stagger_minutes": "Pause between successive turn-ons to avoid consumption peaks. Example: 5 minutes.",
+          "fv_shutoff_enabled": "If enabled: turns off the AC when solar surplus stays below threshold for N consecutive samples. With multiple thermostats, turns off the highest priority number first.",
+          "fv_shutoff_delay_min": "Number of consecutive samples below threshold before turning off. The window is sliding: one high value does not reset the buffer, it just shifts it. Example: 5 samples at 1-min interval = 5 confirmed minutes.",
+          "fv_shutoff_threshold": "The surplus (production - consumption) must be below this value in ALL the last N samples to trigger turn-off. Value 0 = turns off when solar no longer covers consumption. Positive value = turns off earlier, when surplus drops below X Watts. Example: 500W → turns off when surplus is below 500W for N consecutive samples.",
+          "fv_shutoff_extra_hours": "Extra hours after window end when it can still turn off. Example: window ends at 16:00, extra 1h → can turn off until 17:00."
+        }
+      },
+      "modalita_notturna": {
+        "title": "Night mode",
+        "description": "Configure the thermostat's night-time behaviour. You can raise the target slightly, enable automatic turn-on, set automatic turn-off when target is reached, and turn off the AC at the end of night mode.",
+        "data": {
+          "night_start_time": "Night mode start",
+          "night_end_time": "Night mode end",
+          "night_offset": "Extra degrees added to target at night (°C)",
+          "night_ac_enabled": "▶ Automatic night turn-on",
+          "night_turn_on_offset": "Degrees above night target to turn on (°C)",
+          "night_shutoff_enabled": "▶ Automatic turn-off when target is reached",
+          "night_shutoff_delta": "Tolerance above night target (°C)",
+          "night_shutoff_min": "Consecutive minutes at temperature before turning off",
+          "night_end_shutoff_enabled": "▶ Turn off AC at the end of night mode (always)",
+          "night_end_shutoff_auto_only": "▶ Turn off at end of night only if turned on automatically",
+          "presence_boost_enabled": "▶ Fan boost if presence detected and still warm",
+          "presence_boost_minutes": "Minutes of continuous presence before boost",
+          "presence_boost_offset": "Degrees above target to trigger boost (°C)",
+          "window_delay_minutes": "Minutes with window open before turning off AC",
+          "update_interval_minutes": "Thermostat check frequency (minutes)",
+          "calibration_max_offset": "Maximum internal sensor calibration correction (°C)",
+          "min_below_internal": "Minimum setpoint margin below internal sensor (°C)"
+        },
+        "data_description": {
+          "night_start_time": "Night mode starts at this time. The window can span midnight. Example: 23:00.",
+          "night_end_time": "Night mode ends at this time. Example: 07:00.",
+          "night_offset": "At night the effective target becomes target + this value. Example: target 25°C + 1°C = night target 26°C. Set 0 to keep the same target.",
+          "night_ac_enabled": "If enabled: turns on the AC at night if the room exceeds night target + threshold, without needing solar.",
+          "night_turn_on_offset": "How much the room must exceed the night target to trigger automatic turn-on. Example: night target 26°C + 1.5°C → turns on above 27.5°C.",
+          "night_shutoff_enabled": "If enabled: turns off the AC when the room stays at temperature for the configured minutes. Works regardless of how it was turned on.",
+          "night_shutoff_delta": "Tolerance above night target. Example: target 26°C, delta 0.3°C → 'at temperature' when ≤ 26.3°C. If it rises above, countdown restarts.",
+          "night_shutoff_min": "Consecutive minutes at temperature before turning off. Example: 30 minutes.",
+          "night_end_shutoff_enabled": "If enabled: when night mode ends (e.g. at 07:00), the AC is turned off ALWAYS, regardless of why it was on — manual, solar, or automatic night turn-on. Useful to avoid leaving the AC running all morning.",
+          "night_end_shutoff_auto_only": "If enabled: when night mode ends, the AC is turned off ONLY IF it was turned on automatically by night mode. If you turned it on manually or via solar, nothing happens. Can be enabled together with 'always' — in that case 'always' takes precedence.",
+          "presence_boost_enabled": "If enabled: raises fan to medium when presence is detected continuously and the room is still warm.",
+          "presence_boost_minutes": "Minutes of continuous presence before boost activates. Example: 10 minutes.",
+          "presence_boost_offset": "Boost only if room > target + this. Example: 1°C → boost only above 26°C with target 25°C.",
+          "window_delay_minutes": "Minutes to wait before turning off due to open window. Example: 5 minutes → alerts immediately, turns off after 5 minutes.",
+          "update_interval_minutes": "How often the thermostat checks and updates. Example: 5 minutes.",
+          "calibration_max_offset": "Maximum correction for difference between room sensor and AC internal sensor. Example: 3°C.",
+          "min_below_internal": "The setpoint always stays at least this value below the AC internal sensor. Example: 1°C → if AC reads 24°C internally, setpoint never exceeds 23°C."
+        }
+      },
+      "notifiche": {
+        "title": "Notifications and quiet hours",
+        "description": "Configure which devices the thermostat speaks and writes to. You can separately choose what to receive on Google Home and Telegram, and during which hours to silence alerts.",
+        "data": {
+          "tts_media_players": "Google Home / media player devices for voice",
+          "tts_engine_entity": "TTS engine (leave empty for automatic)",
+          "tts_message_open": "Voice message for open window (template)",
+          "notify_targets": "Notify entities for Telegram",
+          "notify_chat_ids": "Telegram chat IDs (alternative to notify entities)",
+          "notify_temp_change_enabled": "▶ Telegram notification on every setpoint change",
+          "notify_temp_change_limit_enabled": "▶ Limit setpoint change notifications",
+          "notify_temp_change_limit_min": "Minimum interval between setpoint change notifications (min)",
+          "notify_temp_change_message": "Setpoint change message (template)",
+          "notify_power_tts": "▶ Google voice for automatic solar/night turn-on/off",
+          "notify_power_notify": "▶ Telegram for automatic solar/night turn-on/off",
+          "notify_night_end_tts": "▶ Google voice when AC turns off at end of night mode",
+          "notify_night_end_notify": "▶ Telegram when AC turns off at end of night mode",
+          "door_alert_enabled": "▶ Alert for door opening and closing",
+          "door_alert_tts": "▶ Door alert via Google voice",
+          "door_alert_notify": "▶ Door alert via Telegram",
+          "door_alert_message": "Door alert message (template)",
+          "quiet_enabled": "▶ Enable quiet hours",
+          "quiet_start_time": "Quiet hours start",
+          "quiet_end_time": "Quiet hours end",
+          "quiet_tts": "▶ Silence Google voice during quiet hours",
+          "quiet_notify": "▶ Silence Telegram during quiet hours"
+        },
+        "data_description": {
+          "tts_media_players": "Google Home speakers or media_player entities for voice messages. Example: media_player.google_bedroom.",
+          "tts_engine_entity": "TTS engine to use. Leave empty to use the first available in Home Assistant.",
+          "tts_message_open": "Message spoken when window opens. Variables: {{ delay }}, {{ name }}, {{ target }}.",
+          "notify_targets": "HA notify entities for Telegram. Example: notify.telegram_user.",
+          "notify_chat_ids": "Telegram chat IDs separated by comma. Only if you have no notify entities.",
+          "notify_temp_change_enabled": "If enabled: Telegram on every setpoint change. Can be frequent.",
+          "notify_temp_change_limit_enabled": "If enabled: setpoint change Telegram notifications are sent at most once every X minutes. Useful to reduce messages when the thermostat frequently adjusts the setpoint. Quiet hours always take precedence and block notifications regardless of this setting.",
+          "notify_temp_change_limit_min": "How many minutes must pass between setpoint change notifications. Example: 30 minutes → even if the setpoint changes every 5 minutes, a notification arrives at most every 30 minutes.",
+          "notify_temp_change_message": "Variables: {{ name }}, {{ old_temp }}, {{ new_temp }}, {{ fan_mode }}, {{ room_temp }}, {{ target }}.",
+          "notify_power_tts": "If enabled: Google Home announces when the AC turns on/off automatically due to solar or night mode, explaining the reason.",
+          "notify_power_notify": "If enabled: Telegram when AC turns on/off automatically due to solar or night mode. Enabled by default.",
+          "notify_night_end_tts": "If enabled: Google Home announces when the AC is turned off at the end of night mode. Separate channel from other alerts — you can keep this on even if others are silenced.",
+          "notify_night_end_notify": "If enabled: Telegram receives a message when the AC turns off at the end of night mode. Separate channel. Enabled by default so you always know when the AC switches off in the morning.",
+          "door_alert_enabled": "If enabled: alerts on both door opening and closing. Informational only, never acts on the AC.",
+          "door_alert_tts": "Door alert via Google Home. Requires 'Door alert' enabled.",
+          "door_alert_notify": "Door alert via Telegram. Requires 'Door alert' enabled.",
+          "door_alert_message": "Door alert message. Variable: {{ name }}.",
+          "quiet_enabled": "If enabled: during the configured time window, some alerts are silenced according to preferences below.",
+          "quiet_start_time": "Quiet period starts at this time. Can span midnight. Example: 23:00.",
+          "quiet_end_time": "Quiet period ends at this time. Example: 07:00.",
+          "quiet_tts": "If enabled: Google Home does not speak during quiet hours for automatic turn-on/off alerts.",
+          "quiet_notify": "If enabled: Telegram suspends automatic turn-on/off messages during quiet hours."
+        }
+      },
+      "entita_completo": {
+        "title": "Smart Thermostat — Main entities",
+        "description": "Connect the air conditioner and room sensors.",
+        "data": {
+          "name": "Thermostat name",
+          "climate_entity": "Air conditioner to control",
+          "temp_sensor": "Room temperature sensor",
+          "window_sensor": "Window sensor",
+          "presence_sensor": "Presence sensor (optional)",
+          "door_sensor": "Door sensor (optional)"
+        },
+        "data_description": {
+          "name": "The name this thermostat will appear as in Home Assistant. Example: 'Bedroom', 'Living room'.",
+          "climate_entity": "The physical AC this thermostat will control. Example: climate.ac_bedroom.",
+          "temp_sensor": "Sensor measuring the real room temperature, placed away from the AC.",
+          "window_sensor": "Binary sensor 'on' when window is open. Example: binary_sensor.window_bedroom.",
+          "presence_sensor": "Optional. Enables fan boost for continuous presence.",
+          "door_sensor": "Optional. Sends open/close alerts, never acts on AC."
+        }
+      },
+      "simple_entita": {
+        "title": "Thermostat — Devices",
+        "description": "Select the AC and sensors to connect. Only the AC is required.",
+        "data": {
+          "name": "Thermostat name",
+          "climate_entity": "Air conditioner to control",
+          "temp_sensor": "Room temperature sensor (optional)",
+          "window_sensor": "Window sensor (optional)",
+          "door_sensor": "Door sensor (optional)"
+        },
+        "data_description": {
+          "name": "The name this thermostat will appear as in Home Assistant. Example: 'Bedroom'.",
+          "climate_entity": "The physical AC to control. Example: climate.ac_bedroom.",
+          "temp_sensor": "External room temperature sensor (e.g. Zigbee probe). If left empty, the thermostat uses the AC's internal sensor. ⚠️ The AC internal sensor reads only integer values (e.g. 25°C, not 25.3°C) so turn-on and turn-off thresholds adapt automatically. Example: sensor.temperature_bedroom. Leave empty to use the AC internal sensor.",
+          "window_sensor": "Binary sensor 'on' when window is open. If set: alerts on opening and turns off AC after 5 minutes if still open, then turns it back on when closed. Leave empty to disable.",
+          "door_sensor": "Binary sensor 'on' when door is open. If set: sends an alert when door opens or closes. Never acts on AC. Leave empty to disable."
+        }
+      },
+      "simple_temperature": {
+        "title": "Thermostat — Temperatures and schedules",
+        "description": "Set the desired temperature for daytime and nighttime, with their respective schedules.",
+        "data": {
+          "simple_target_day": "Daytime target temperature (°C)",
+          "simple_target_night": "Nighttime target temperature (°C)",
+          "simple_night_start": "Night mode start",
+          "simple_night_end": "Night mode end",
+          "night_end_shutoff_enabled": "▶ Turn off AC at the end of night mode (always)",
+          "night_end_shutoff_auto_only": "▶ Turn off at end of night only if turned on automatically",
+          "simple_turn_on_offset": "Minimum offset above target to turn on (°C)",
+          "simple_no_auto_on_night": "▶ Do not turn on AC automatically at night",
+          "simple_dry_enabled": "▶ Use dehumidifier before cooling",
+          "simple_dry_max_min": "Maximum time in dehumidification before switching to cooling (min)"
+        },
+        "data_description": {
+          "simple_target_day": "The temperature you want to maintain during the day. Example: 25°C → with external sensor AC starts above 26.5°C, with internal sensor above 27°C.",
+          "simple_target_night": "Desired temperature at night. Usually a couple of degrees higher than daytime to avoid over-cooling. Example: 26°C.",
+          "simple_night_start": "Night mode starts at this time with the nighttime target. Daytime mode starts automatically when night ends. Example: 23:00.",
+          "simple_night_end": "Night mode ends at this time and daytime mode starts automatically. Example: 07:00.",
+          "night_end_shutoff_enabled": "If enabled: when night mode ends (e.g. at 07:00), the AC is turned off ALWAYS, regardless of why it was on.",
+          "night_end_shutoff_auto_only": "If enabled: turns off at end of night ONLY IF the AC was turned on automatically. If you turned it on manually, nothing happens.",
+          "simple_turn_on_offset": "How many degrees the temperature must exceed the target before the AC turns on. With external sensor the default is 0.8°C (e.g. target 25°C → turns on from 25.8°C). With internal sensor the default is 1.0°C (e.g. target 25°C → turns on from 26°C). Lower values = turns on sooner but with more cycles. Higher values = turns on only when it is really hot. Note: at the end of night mode there is always a 1-hour pause before the thermostat starts turning on the AC again, to avoid unwanted turn-ons caused by the target change.",
+          "simple_no_auto_on_night": "If enabled: during night mode the thermostat never turns on the AC automatically, even if the temperature exceeds the configured threshold. If the AC was already on (e.g. you turned it on manually or it was left on from the afternoon), it continues to regulate and turn it off when the target temperature is reached or at end of night. Useful if you prefer to sleep without AC even on hot nights and want to control it manually.",
+          "simple_dry_enabled": "If enabled: when the temperature rises slightly above the target, the AC starts in dehumidifier mode (DRY) instead of full cooling. This lowers humidity and makes the room feel fresher while using less power. After the configured maximum time (or if temperature rises further) it automatically switches to full cooling. Particularly useful in humid climates, especially during morning hours. If the temperature at start is already too high, it starts directly in cooling mode without going through dry.",
+          "simple_dry_max_min": "How long the AC stays in dehumidification mode before switching to cooling. If during this time the room cools down enough, it turns off without switching to cooling. If the temperature stays high or rises, after this time it automatically switches to cooling. Example: 30 minutes → gives the dehumidifier half an hour to lower humidity, then cools if needed. Lower values (10-15 min) = less dehumidification. Higher values (45-60 min) = more dehumidification, useful in very humid mornings."
+        }
+      },
+      "energia_simple": {
+        "title": "Thermostat — Solar",
+        "description": "Configure solar sensors. The AC will turn on automatically when you are producing enough solar energy and turn off when production drops.",
+        "data": {
+          "fv_sensor": "Solar production sensor (W)",
+          "consumption_sensor": "Grid consumption sensor (W)",
+          "battery_sensor": "Battery state of charge sensor (%)",
+          "fv_margin_w": "Minimum surplus to turn on (W)",
+          "soc_min": "Minimum battery charge to turn on (%)",
+          "fv_priority": "Turn-on priority (lower number = first)",
+          "fv_stagger_minutes": "Minimum gap between turn-ons/offs (min)",
+          "fv_shutoff_enabled": "▶ Automatic turn-off when solar drops",
+          "fv_shutoff_delay_min": "Consecutive insufficient samples before turning off",
+          "fv_shutoff_threshold": "Solar surplus threshold for turn-off (W)",
+          "sunset_info": "🌅 Today's sunset time (informational)",
+          "cutoff_info": "⏱️ Manual control cutoff time (informational)",
+          "simple_sunset_anticipate_h": "Hours before sunset to stop automatic control",
+          "fv_shutoff_manual": "Turn off even if manually turned on"
+        },
+        "data_description": {
+          "fv_sensor": "Watts produced by panels in real time. Example: sensor.solar_panels_total.",
+          "consumption_sensor": "Instantaneous grid consumption. Example: sensor.grid_consumption.",
+          "battery_sensor": "Battery charge percentage. Example: sensor.battery_soc.",
+          "fv_margin_w": "Surplus required above consumption to turn on. Example: 1200W → turns on only if producing 1200W more than consuming.",
+          "soc_min": "Minimum battery charge to enable turn-on. Example: 70 → turns on only with battery ≥ 70%.",
+          "fv_priority": "With multiple ACs, lower number turns on first and off last. Example: bedroom=10, living=20.",
+          "fv_stagger_minutes": "Pause between successive turn-ons to avoid peaks. Example: 5 minutes.",
+          "fv_shutoff_enabled": "If enabled: turns off when surplus stays below threshold for N consecutive samples.",
+          "fv_shutoff_delay_min": "Consecutive samples below threshold before turning off. Sliding window. Example: 5 samples at 1-min interval = 5 confirmed minutes.",
+          "fv_shutoff_threshold": "Surplus must stay below this for all N samples. Value 0 = turns off when FV < consumption. Example: 500W.",
+          "sunset_info": "Time the sun sets today at your location, calculated automatically by Home Assistant. Updates every time you open these settings.",
+          "cutoff_info": "Automatically calculated: sunset minus the configured hours. After this time the automation stops controlling the AC turned on manually and stops automatic solar turn-ons. Updates every time you open these settings.",
+          "simple_sunset_anticipate_h": "How many hours before sunset the automation stops intervening. Automatic solar turn-on is active from end of night mode until this time — calculated automatically every day based on the season. Minimum 2 hours. Example: sunset 19:40 with 2 hours → automation active until 17:40.",
+          "fv_shutoff_manual": "If enabled, the thermostat will turn off the AC even when it was manually turned on by the user and solar production is insufficient."
+        }
+      },
+      "simple_notifiche": {
+        "title": "Thermostat — Notifications",
+        "description": "Configure Google Home voice alerts and Telegram messages separately. You can enable different channels for each event.",
+        "data": {
+          "tts_media_players": "━━━ GOOGLE HOME ━━━",
+          "tts_engine_entity": "TTS engine (leave empty for automatic)",
+          "simple_notify_tts_ac_on": "▶ AC turns on",
+          "simple_notify_tts_ac_off": "▶ AC turns off",
+          "simple_notify_tts_temp_change": "▶ Temperature change",
+          "simple_notify_tts_window_open": "▶ Window opens",
+          "simple_notify_tts_window_close": "▶ Window closes",
+          "simple_notify_tts_door_open": "▶ Door opens",
+          "simple_notify_tts_door_close": "▶ Door closes",
+          "simple_notify_tts_night_start": "▶ Night mode starts",
+          "simple_notify_tts_night_end": "▶ Night mode ends",
+          "simple_quiet_night_tts": "▶ Silence Google Home during night hours",
+          "notify_targets": "━━━ TELEGRAM ━━━",
+          "notify_chat_ids": "Telegram chat IDs (alternative to notify entities)",
+          "simple_notify_tel_ac_on": "▶ AC turns on",
+          "simple_notify_tel_ac_off": "▶ AC turns off",
+          "simple_notify_tel_temp_change": "▶ Temperature change",
+          "simple_notify_tel_window_open": "▶ Window opens",
+          "simple_notify_tel_window_close": "▶ Window closes",
+          "simple_notify_tel_door_open": "▶ Door opens",
+          "simple_notify_tel_door_close": "▶ Door closes",
+          "simple_notify_tel_night_start": "▶ Night mode starts",
+          "simple_notify_tel_night_end": "▶ Night mode ends",
+          "simple_quiet_night_notify": "▶ Silence Telegram during night hours",
+          "simple_notify_tel_ac_off_fv": "▶ Turn off due to insufficient solar"
+        },
+        "data_description": {
+          "tts_media_players": "Select Google Home or Nest speakers. Leave empty to disable voice.",
+          "tts_engine_entity": "TTS engine. Leave empty for the HA default.",
+          "simple_notify_tts_ac_on": "Google Home announces when the AC turns on automatically.",
+          "simple_notify_tts_ac_off": "Google Home announces when the AC turns off after reaching the target temperature.",
+          "simple_notify_tts_temp_change": "Google Home announces every room temperature change detected.",
+          "simple_notify_tts_window_open": "Google Home alerts when window opens (AC turns off after 5 minutes if still open).",
+          "simple_notify_tts_window_close": "Google Home alerts when window closes and AC turns back on.",
+          "simple_notify_tts_door_open": "Google Home alerts when door opens. Informational only.",
+          "simple_notify_tts_door_close": "Google Home alerts when door closes. Informational only.",
+          "simple_notify_tts_night_start": "Google Home announces start of night mode with nighttime target.",
+          "simple_notify_tts_night_end": "Google Home announces end of night mode.",
+          "simple_quiet_night_tts": "If enabled: Google Home does not speak during night hours. Window alerts remain always active.",
+          "notify_targets": "HA notify entities for Telegram. Example: notify.telegram_user.",
+          "notify_chat_ids": "Alternative to notify entities: Telegram chat IDs separated by comma.",
+          "simple_notify_tel_ac_on": "Telegram alerts when AC turns on automatically.",
+          "simple_notify_tel_ac_off": "Telegram alerts when AC turns off after reaching target temperature.",
+          "simple_notify_tel_temp_change": "Telegram alerts on every temperature change. Can be frequent.",
+          "simple_notify_tel_window_open": "Telegram alerts when window opens.",
+          "simple_notify_tel_window_close": "Telegram alerts when window closes.",
+          "simple_notify_tel_door_open": "Telegram alerts when door opens. Informational only.",
+          "simple_notify_tel_door_close": "Telegram alerts when door closes. Informational only.",
+          "simple_notify_tel_night_start": "Telegram alerts at start of night mode.",
+          "simple_notify_tel_night_end": "Telegram alerts at end of night mode.",
+          "simple_quiet_night_notify": "If enabled: Telegram does not send automatic messages during night hours.",
+          "simple_notify_tel_ac_off_fv": "Telegram alerts when AC turns off because solar production is insufficient. Message indicates this is an automatic FV shutdown, not due to temperature reached."
+        }
+      },
+      "protezione_potenza": {
+        "title": "Power protection — Prevent circuit breaker trip",
+        "description": "Configure automatic protection against circuit breaker trips. If consumption exceeds the set threshold, the AC turns off automatically and turns back on when consumption drops.",
+        "data": {
+          "power_limit_enabled": "▶ Enable power protection",
+          "power_limit_sensor": "Consumption sensor to monitor (W)",
+          "power_limit_mode": "Management mode",
+          "power_limit_max_w": "Maximum consumption threshold before turn-off (W)",
+          "power_limit_hysteresis_w": "Consumption reduction required to turn back on (W)",
+          "power_limit_restore_min": "Minutes of low consumption before turning back on",
+          "power_limit_notify_tts": "▶ Google Home voice alert",
+          "power_limit_notify_telegram": "▶ Telegram alert"
+        },
+        "data_description": {
+          "power_limit_enabled": "If enabled: the thermostat monitors consumption and automatically turns off the AC if it exceeds the threshold for at least 30 seconds (anti-spike). It turns back on when consumption drops enough.",
+          "power_limit_sensor": "Sensor measuring the electrical consumption of the circuit to protect. Can be total house consumption or a single circuit meter. Example: sensor.living_room_consumption.",
+          "power_limit_mode": "Single AC: manages only this AC independently. Multiple AC: coordinates shutdown and restart in cascade with other thermostats that have the same protection active, using the already configured priority.",
+          "power_limit_max_w": "If consumption exceeds this value for at least 30 seconds, the AC turns off. The 30 seconds prevent shutdowns due to momentary spikes (e.g. washing machine start, induction hob). Example: 3500W → turns off if consuming more than 3500W.",
+          "power_limit_hysteresis_w": "How many Watts consumption must drop below the maximum threshold before the AC can turn back on. Example: threshold 3500W, hysteresis 800W → turns on only when consumption drops below 2700W. Avoids rapid on/off cycles.",
+          "power_limit_restore_min": "How many minutes consumption must stay below the restart threshold before the AC turns back on. Example: 5 minutes → if consumption drops but rises again within 5 minutes, AC does not restart.",
+          "power_limit_notify_tts": "If enabled: Google Home announces when the AC is turned off or on due to power protection.",
+          "power_limit_notify_telegram": "If enabled: Telegram alerts when the AC is turned off or on due to power protection."
+        }
+      },
+      "protezione_potenza_completo": {
+        "title": "Power protection — Prevent circuit breaker trip",
+        "description": "Configure automatic protection against circuit breaker trips. If consumption exceeds the set threshold, the AC turns off automatically and turns back on when consumption drops.",
+        "data": {
+          "power_limit_enabled": "▶ Enable power protection",
+          "power_limit_sensor": "Consumption sensor to monitor (W)",
+          "power_limit_mode": "Management mode",
+          "power_limit_max_w": "Maximum consumption threshold before turn-off (W)",
+          "power_limit_hysteresis_w": "Consumption reduction required to turn back on (W)",
+          "power_limit_restore_min": "Minutes of low consumption before turning back on",
+          "power_limit_notify_tts": "▶ Google Home voice alert",
+          "power_limit_notify_telegram": "▶ Telegram alert",
+          "power_limit_msg_off": "Turn-off message (template)",
+          "power_limit_msg_on": "Turn-on message (template)"
+        },
+        "data_description": {
+          "power_limit_enabled": "If enabled: the thermostat monitors consumption and automatically turns off the AC if it exceeds the threshold for at least 30 seconds (anti-spike). It turns back on when consumption drops enough.",
+          "power_limit_sensor": "Sensor measuring the electrical consumption of the circuit to protect. Can be total house consumption or a single circuit meter. Example: sensor.living_room_consumption.",
+          "power_limit_mode": "Single AC: manages only this AC independently. Multiple AC: coordinates shutdown and restart in cascade with other thermostats that have the same protection active, using the already configured priority.",
+          "power_limit_max_w": "If consumption exceeds this value for at least 30 seconds, the AC turns off. The 30 seconds prevent shutdowns due to momentary spikes (e.g. washing machine start, induction hob). Example: 3500W → turns off if consuming more than 3500W.",
+          "power_limit_hysteresis_w": "How many Watts consumption must drop below the maximum threshold before the AC can turn back on. Example: threshold 3500W, hysteresis 800W → turns on only when consumption drops below 2700W. Avoids rapid on/off cycles.",
+          "power_limit_restore_min": "How many minutes consumption must stay below the restart threshold before the AC turns back on. Example: 5 minutes → if consumption drops but rises again within 5 minutes, AC does not restart.",
+          "power_limit_notify_tts": "If enabled: Google Home announces when the AC is turned off or on due to power protection.",
+          "power_limit_notify_telegram": "If enabled: Telegram alerts when the AC is turned off or on due to power protection.",
+          "power_limit_msg_off": "Message sent when AC turns off due to excess consumption. Variables: {{ name }} = thermostat name, {{ consumo }} = current consumption in W.",
+          "power_limit_msg_on": "Message sent when AC turns back on after consumption drops. Variables: {{ name }} = thermostat name."
+        }
+      },
+      "emergenza_simple": {
+        "title": "Heat emergency",
+        "description": "Configure the 'Heat emergency' switch behavior. When manually activated, the thermostat completely ignores solar production and turns on the AC based only on temperature, like simple mode. It auto-deactivates 5 minutes before night mode or when temperature returns to normal.",
+        "data": {
+          "emergency_heat_active": "▶ Activate heat emergency now",
+          "emergency_heat_threshold": "Temperature above target to turn on in emergency (°C)",
+          "emergency_heat_end_threshold": "Temperature above target to consider emergency over (°C)",
+          "emergency_notify_tts": "▶ Google Home voice alert",
+          "emergency_notify_telegram": "▶ Telegram alert"
+        },
+        "data_description": {
+          "emergency_heat_active": "Activate or deactivate the heat emergency switch directly from here. When active the thermostat completely ignores solar production and turns on the AC based only on temperature. Deactivates automatically 5 minutes before night mode or when temperature returns within the configured threshold.",
+          "emergency_heat_threshold": "How many degrees above target to turn on in emergency mode. Example: 1.5°C with target 25°C → turns on from 26.5°C ignoring solar.",
+          "emergency_heat_end_threshold": "When temperature drops within this margin of target, emergency is considered over and switch deactivates automatically. Example: 0.7°C with target 25°C → emergency ends when it drops below 25.7°C.",
+          "emergency_notify_tts": "If enabled: Google Home announces when heat emergency starts and ends.",
+          "emergency_notify_telegram": "If enabled: Telegram alerts when heat emergency starts and ends."
+        }
+      },
+      "emergenza_completo": {
+        "title": "Heat emergency",
+        "description": "Configure the 'Heat emergency' switch behavior. When manually activated, the thermostat completely ignores solar production and turns on the AC based only on temperature, like simple mode. It auto-deactivates 5 minutes before night mode or when temperature returns to normal.",
+        "data": {
+          "emergency_heat_active": "▶ Activate heat emergency now",
+          "emergency_heat_threshold": "Temperature above target to turn on in emergency (°C)",
+          "emergency_heat_end_threshold": "Temperature above target to consider emergency over (°C)",
+          "emergency_notify_tts": "▶ Google Home voice alert",
+          "emergency_notify_telegram": "▶ Telegram alert",
+          "emergency_msg_on": "Emergency start message (template)",
+          "emergency_msg_off": "Emergency end message (template)"
+        },
+        "data_description": {
+          "emergency_heat_active": "Activate or deactivate the heat emergency switch directly from here. When active the thermostat completely ignores solar production and turns on the AC based only on temperature. Deactivates automatically 5 minutes before night mode or when temperature returns within the configured threshold.",
+          "emergency_heat_threshold": "How many degrees above target to turn on in emergency mode. Example: 1.5°C with target 25°C → turns on from 26.5°C ignoring solar.",
+          "emergency_heat_end_threshold": "When temperature drops within this margin of target, emergency is considered over and switch deactivates automatically. Example: 0.7°C with target 25°C → emergency ends when it drops below 25.7°C.",
+          "emergency_notify_tts": "If enabled: Google Home announces when heat emergency starts and ends.",
+          "emergency_notify_telegram": "If enabled: Telegram alerts when heat emergency starts and ends.",
+          "emergency_msg_on": "Message sent when heat emergency starts. Variables: {{ name }} = thermostat name, {{ temp }} = current temperature, {{ target }} = target temperature.",
+          "emergency_msg_off": "Message sent when heat emergency ends. Same variables available."
+        }
+      },
+      "cambia_modalita": {
+        "title": "Change configuration mode",
+        "description": "You can change the configuration mode. Note: changing mode keeps the old parameters but you may need to reconfigure some settings.",
+        "data": {
+          "config_mode": "Configuration mode"
+        },
+        "data_description": {
+          "config_mode": "🟢 SIMPLE — Few essential fields, automatic logic.\n🔵 SIMPLE WITH SOLAR — Like Simple + solar management.\n⚙️ FULL — All advanced parameters."
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This air conditioner is already managed by another Smart Thermostat FV instance."
+    }
+  },
+  "options": {
+    "step": {
+      "sensori": {
+        "title": "Entities and sensors",
+        "description": "Update the controlled air conditioner and connected sensors.",
+        "data": {
+          "name": "Thermostat name",
+          "temp_sensor": "Room temperature sensor",
+          "window_sensor": "Window sensor",
+          "presence_sensor": "Presence sensor (optional)",
+          "door_sensor": "Door sensor (optional)"
+        },
+        "data_description": {
+          "name": "The name this thermostat appears as in Home Assistant. Example: 'Bedroom'.",
+          "temp_sensor": "Room temperature probe, away from the AC.",
+          "window_sensor": "Binary sensor 'on' when the window is open.",
+          "presence_sensor": "Optional. Enables fan boost for continuous presence. Leave empty to disable.",
+          "door_sensor": "Optional. Alerts when door opens or closes. Never acts on the AC. Leave empty to disable."
+        }
+      },
+      "profilo": {
+        "title": "Regulation profile",
+        "description": "Choose how the thermostat should behave.",
+        "data": {
+          "profile": "Regulation profile"
+        },
+        "data_description": {
+          "profile": "🔵 BALANCED — Turns on at +1.5°C, high fan from +2.0°C.\n🔴 AGGRESSIVE — Turns on at +1.2°C, high fan from +1.6°C. For large or sun-exposed rooms.\n🟢 GENTLE — Turns on at +1.8°C, high fan from +2.4°C. Quiet, ideal for sleeping.\n⚙️ CUSTOM — Set every threshold manually in the next step."
+        }
+      },
+      "soglie_termiche": {
+        "title": "Custom thermal thresholds",
+        "description": "Only visible with Custom profile.",
+        "data": {
+          "target_temp_default": "Initial target temperature (°C)",
+          "extreme_offset": "Extreme heat threshold above target (°C)",
+          "hot_offset": "Strong heat threshold above target (°C)",
+          "range_offset": "Mild heat threshold above target (°C)",
+          "below_offset": "Margin below target to slow down (°C)",
+          "turn_on_offset": "Minimum offset to turn on from solar (°C)",
+          "temp_delta": "Setpoint delta warm/strong bands (°C)",
+          "extreme_delta": "Setpoint delta extreme heat band (°C)"
+        },
+        "data_description": {
+          "target_temp_default": "Desired room temperature. Example: 25°C.",
+          "extreme_offset": "Above target + this: max fan. Example: 2.0°C → extreme heat above 27°C.",
+          "hot_offset": "Above target + this: medium fan. Example: 1.5°C → strong heat between 26.5 and 27°C.",
+          "range_offset": "Above target + this: low fan. Example: 0.2°C → mild heat between 25.2 and 26.5°C.",
+          "below_offset": "Below target - this: AC slows down. Example: 0.1°C → slows below 24.9°C.",
+          "turn_on_offset": "Turns on from solar only if room > target + this. Example: 1.5°C → only above 26.5°C.",
+          "temp_delta": "How much the setpoint is lowered in normal bands. Example: 1.0°C.",
+          "extreme_delta": "How much the setpoint is lowered in extreme heat. Example: 2.0°C."
+        }
+      },
+      "energia": {
+        "title": "Solar — Automatic turn-on and turn-off",
+        "description": "Configure solar usage. Leave sensors empty to disable.",
+        "data": {
+          "fv_sensor": "Solar production sensor (W)",
+          "consumption_sensor": "Grid consumption sensor (W)",
+          "battery_sensor": "Battery state of charge sensor (%)",
+          "fv_margin_w": "Minimum surplus to turn on (W)",
+          "soc_min": "Minimum battery charge to turn on (%)",
+          "fv_start_time": "Automatic turn-on window start",
+          "fv_end_time": "Automatic turn-on window end",
+          "fv_priority": "Turn-on priority (lower number = first)",
+          "fv_stagger_minutes": "Minimum gap between turn-ons/offs (min)",
+          "fv_shutoff_enabled": "▶ Automatic turn-off when solar drops",
+          "fv_shutoff_delay_min": "Consecutive insufficient samples before turning off",
+          "fv_shutoff_threshold": "Solar surplus threshold for turn-off (W)",
+          "fv_shutoff_extra_hours": "Extra hours after window end for turn-off"
+        },
+        "data_description": {
+          "fv_sensor": "Watts produced by panels in real time.",
+          "consumption_sensor": "Instantaneous grid consumption.",
+          "battery_sensor": "Battery charge percentage.",
+          "fv_margin_w": "Surplus required above consumption to turn on. Example: 1200W.",
+          "soc_min": "Minimum battery charge to enable turn-on. Example: 70%.",
+          "fv_start_time": "Does not turn on automatically before this time.",
+          "fv_end_time": "Does not turn on automatically after this time.",
+          "fv_priority": "Lower number = turns on first and off last.",
+          "fv_stagger_minutes": "Pause between successive turn-ons to avoid peaks.",
+          "fv_shutoff_enabled": "If enabled: turns off when surplus stays below threshold for N consecutive samples.",
+          "fv_shutoff_delay_min": "Number of consecutive samples below threshold before turning off. Sliding window: one high value shifts the buffer rather than resetting it.",
+          "fv_shutoff_threshold": "Minimum surplus (production - consumption) required. Below this for N samples → turns off. Value 0 = turns off when solar no longer covers consumption.",
+          "fv_shutoff_extra_hours": "Extra hours after window end when it can still turn off."
+        }
+      },
+      "modalita_notturna": {
+        "title": "Night mode",
+        "description": "Configure the thermostat's night-time behaviour.",
+        "data": {
+          "night_start_time": "Night mode start",
+          "night_end_time": "Night mode end",
+          "night_offset": "Extra degrees added to target at night (°C)",
+          "night_ac_enabled": "▶ Automatic night turn-on",
+          "night_turn_on_offset": "Degrees above night target to turn on (°C)",
+          "night_shutoff_enabled": "▶ Automatic turn-off when target is reached",
+          "night_shutoff_delta": "Tolerance above night target (°C)",
+          "night_shutoff_min": "Consecutive minutes at temperature before turning off",
+          "night_end_shutoff_enabled": "▶ Turn off AC at the end of night mode (always)",
+          "night_end_shutoff_auto_only": "▶ Turn off at end of night only if turned on automatically",
+          "presence_boost_enabled": "▶ Fan boost if presence detected and still warm",
+          "presence_boost_minutes": "Minutes of continuous presence before boost",
+          "presence_boost_offset": "Degrees above target for boost (°C)",
+          "window_delay_minutes": "Minutes with window open before turning off",
+          "update_interval_minutes": "Check frequency (minutes)",
+          "calibration_max_offset": "Maximum internal sensor calibration correction (°C)",
+          "min_below_internal": "Minimum setpoint margin below internal sensor (°C)"
+        },
+        "data_description": {
+          "night_start_time": "Night mode starts. Can span midnight. Example: 23:00.",
+          "night_end_time": "Night mode ends. Example: 07:00.",
+          "night_offset": "Degrees added to target at night. Example: target 25°C + 1°C = night target 26°C.",
+          "night_ac_enabled": "If enabled: turns on at night if room exceeds night target + threshold.",
+          "night_turn_on_offset": "Threshold above night target to trigger turn-on. Example: night target 26°C + 1.5°C → turns on above 27.5°C.",
+          "night_shutoff_enabled": "If enabled: turns off when room stays at temperature for configured minutes.",
+          "night_shutoff_delta": "Tolerance above night target. Example: target 26°C, delta 0.3°C → at temperature when ≤ 26.3°C.",
+          "night_shutoff_min": "Consecutive minutes at temperature before turning off. If temp rises, countdown restarts.",
+          "night_end_shutoff_enabled": "If enabled: at the end of night mode the AC is turned off ALWAYS, regardless of why it was on.",
+          "night_end_shutoff_auto_only": "If enabled: at the end of night mode turns off ONLY IF the AC was turned on automatically by night mode. If you turned it on manually, nothing happens.",
+          "presence_boost_enabled": "If enabled: raises fan to medium when presence is continuous and room is still warm.",
+          "presence_boost_minutes": "Minutes of continuous presence before boost. Example: 10 minutes.",
+          "presence_boost_offset": "Boost only if room > target + this. Example: 1°C → boost only above 26°C.",
+          "window_delay_minutes": "Minutes before turning off for open window. Example: 5 minutes.",
+          "update_interval_minutes": "How often the thermostat checks. Example: 5 minutes.",
+          "calibration_max_offset": "Maximum correction for room vs internal sensor difference. Example: 3°C.",
+          "min_below_internal": "Setpoint stays at least this value below the AC internal sensor. Example: 1°C."
+        }
+      },
+      "notifiche": {
+        "title": "Notifications and quiet hours",
+        "description": "Configure voice and Telegram alerts, and the hours during which automatic alerts are silenced.",
+        "data": {
+          "tts_media_players": "Google Home / media player devices",
+          "tts_engine_entity": "TTS engine (empty = automatic)",
+          "tts_message_open": "Voice message open window (template)",
+          "notify_targets": "Notify entities for Telegram",
+          "notify_chat_ids": "Telegram chat IDs",
+          "notify_temp_change_enabled": "▶ Telegram notification on every setpoint change",
+          "notify_temp_change_limit_enabled": "▶ Limit setpoint change notifications",
+          "notify_temp_change_limit_min": "Minimum interval between setpoint change notifications (min)",
+          "notify_temp_change_message": "Setpoint change message (template)",
+          "notify_power_tts": "▶ Google voice for automatic solar/night turn-on/off",
+          "notify_power_notify": "▶ Telegram for automatic solar/night turn-on/off",
+          "notify_night_end_tts": "▶ Google voice when AC turns off at end of night mode",
+          "notify_night_end_notify": "▶ Telegram when AC turns off at end of night mode",
+          "door_alert_enabled": "▶ Alert for door opening and closing",
+          "door_alert_tts": "▶ Door alert via Google voice",
+          "door_alert_notify": "▶ Door alert via Telegram",
+          "door_alert_message": "Door alert message (template)",
+          "quiet_enabled": "▶ Enable quiet hours",
+          "quiet_start_time": "Quiet hours start",
+          "quiet_end_time": "Quiet hours end",
+          "quiet_tts": "▶ Silence Google voice during quiet hours",
+          "quiet_notify": "▶ Silence Telegram during quiet hours"
+        },
+        "data_description": {
+          "tts_media_players": "Google Home speakers or media_player entities for voice messages.",
+          "tts_engine_entity": "TTS engine. Leave empty for the default.",
+          "tts_message_open": "Message when window opens. Variables: {{ delay }}, {{ name }}, {{ target }}.",
+          "notify_targets": "HA notify entities for Telegram. Example: notify.telegram_user.",
+          "notify_chat_ids": "Telegram chat IDs separated by comma. Only if you have no notify entities.",
+          "notify_temp_change_enabled": "If enabled: Telegram on every setpoint change. Can be frequent.",
+          "notify_temp_change_limit_enabled": "If enabled: setpoint change Telegram notifications are sent at most once every X minutes. Useful to reduce messages when the thermostat frequently adjusts the setpoint. Quiet hours always take precedence and block notifications regardless of this setting.",
+          "notify_temp_change_limit_min": "How many minutes must pass between setpoint change notifications. Example: 30 minutes → even if the setpoint changes every 5 minutes, a notification arrives at most every 30 minutes.",
+          "notify_temp_change_message": "Variables: {{ name }}, {{ old_temp }}, {{ new_temp }}, {{ fan_mode }}, {{ room_temp }}, {{ target }}.",
+          "notify_power_tts": "If enabled: Google Home announces automatic turn-on/off due to solar or night mode.",
+          "notify_power_notify": "If enabled: Telegram for automatic turn-on/off due to solar or night mode.",
+          "notify_night_end_tts": "If enabled: Google Home announces when AC turns off at end of night mode. Separate channel.",
+          "notify_night_end_notify": "If enabled: Telegram when AC turns off at end of night mode. Separate channel. Enabled by default.",
+          "door_alert_enabled": "If enabled: alerts on both opening and closing. Informational only.",
+          "door_alert_tts": "Door alert via Google Home.",
+          "door_alert_notify": "Door alert via Telegram.",
+          "door_alert_message": "Door alert message. Variable: {{ name }}.",
+          "quiet_enabled": "If enabled: during the configured window, some alerts are silenced.",
+          "quiet_start_time": "Quiet period starts at this time. Can span midnight. Example: 23:00.",
+          "quiet_end_time": "Quiet period ends at this time and alerts return to normal. Example: 07:00.",
+          "quiet_tts": "If enabled: Google Home silent during quiet hours for automatic alerts.",
+          "quiet_notify": "If enabled: Telegram suspends automatic messages during quiet hours."
+        }
+      },
+      "simple_entita": {
+        "title": "Thermostat — Devices",
+        "description": "Select the AC and sensors to connect. Only the AC is required.",
+        "data": {
+          "name": "Thermostat name",
+          "climate_entity": "Air conditioner to control",
+          "temp_sensor": "Room temperature sensor (optional)",
+          "window_sensor": "Window sensor (optional)",
+          "door_sensor": "Door sensor (optional)"
+        },
+        "data_description": {
+          "name": "The name this thermostat will appear as in Home Assistant. Example: 'Bedroom'.",
+          "climate_entity": "The physical AC to control. Example: climate.ac_bedroom.",
+          "temp_sensor": "External room temperature sensor (e.g. Zigbee probe). If left empty, the thermostat uses the AC's internal sensor. ⚠️ The AC internal sensor reads only integer values (e.g. 25°C, not 25.3°C) so turn-on and turn-off thresholds adapt automatically. Example: sensor.temperature_bedroom. Leave empty to use the AC internal sensor.",
+          "window_sensor": "Binary sensor 'on' when window is open. If set: alerts on opening and turns off AC after 5 minutes if still open, then turns it back on when closed. Leave empty to disable.",
+          "door_sensor": "Binary sensor 'on' when door is open. If set: sends an alert when door opens or closes. Never acts on AC. Leave empty to disable."
+        }
+      },
+      "simple_temperature": {
+        "title": "Thermostat — Temperatures and schedules",
+        "description": "Set the desired temperature for daytime and nighttime, with their respective schedules.",
+        "data": {
+          "simple_target_day": "Daytime target temperature (°C)",
+          "simple_target_night": "Nighttime target temperature (°C)",
+          "simple_night_start": "Night mode start",
+          "simple_night_end": "Night mode end",
+          "night_end_shutoff_enabled": "▶ Turn off AC at the end of night mode (always)",
+          "night_end_shutoff_auto_only": "▶ Turn off at end of night only if turned on automatically",
+          "simple_turn_on_offset": "Minimum offset above target to turn on (°C)",
+          "simple_no_auto_on_night": "▶ Do not turn on AC automatically at night",
+          "simple_dry_enabled": "▶ Use dehumidifier before cooling",
+          "simple_dry_max_min": "Maximum time in dehumidification before switching to cooling (min)"
+        },
+        "data_description": {
+          "simple_target_day": "The temperature you want to maintain during the day. Example: 25°C → with external sensor AC starts above 26.5°C, with internal sensor above 27°C.",
+          "simple_target_night": "Desired temperature at night. Usually a couple of degrees higher than daytime to avoid over-cooling. Example: 26°C.",
+          "simple_night_start": "Night mode starts at this time with the nighttime target. Daytime mode starts automatically when night ends. Example: 23:00.",
+          "simple_night_end": "Night mode ends at this time and daytime mode starts automatically. Example: 07:00.",
+          "night_end_shutoff_enabled": "If enabled: when night mode ends (e.g. at 07:00), the AC is turned off ALWAYS, regardless of why it was on.",
+          "night_end_shutoff_auto_only": "If enabled: turns off at end of night ONLY IF the AC was turned on automatically. If you turned it on manually, nothing happens.",
+          "simple_turn_on_offset": "How many degrees the temperature must exceed the target before the AC turns on. With external sensor the default is 0.8°C (e.g. target 25°C → turns on from 25.8°C). With internal sensor the default is 1.0°C (e.g. target 25°C → turns on from 26°C). Lower values = turns on sooner but with more cycles. Higher values = turns on only when it is really hot. Note: at the end of night mode there is always a 1-hour pause before the thermostat starts turning on the AC again, to avoid unwanted turn-ons caused by the target change.",
+          "simple_no_auto_on_night": "If enabled: during night mode the thermostat never turns on the AC automatically, even if the temperature exceeds the configured threshold. If the AC was already on (e.g. you turned it on manually or it was left on from the afternoon), it continues to regulate and turn it off when the target temperature is reached or at end of night. Useful if you prefer to sleep without AC even on hot nights and want to control it manually.",
+          "simple_dry_enabled": "If enabled: when the temperature rises slightly above the target, the AC starts in dehumidifier mode (DRY) instead of full cooling. This lowers humidity and makes the room feel fresher while using less power. After the configured maximum time (or if temperature rises further) it automatically switches to full cooling. Particularly useful in humid climates, especially during morning hours. If the temperature at start is already too high, it starts directly in cooling mode without going through dry.",
+          "simple_dry_max_min": "How long the AC stays in dehumidification mode before switching to cooling. If during this time the room cools down enough, it turns off without switching to cooling. If the temperature stays high or rises, after this time it automatically switches to cooling. Example: 30 minutes → gives the dehumidifier half an hour to lower humidity, then cools if needed. Lower values (10-15 min) = less dehumidification. Higher values (45-60 min) = more dehumidification, useful in very humid mornings."
+        }
+      },
+      "energia_simple": {
+        "title": "Thermostat — Solar",
+        "description": "Configure solar sensors. The AC will turn on automatically when you are producing enough solar energy and turn off when production drops.",
+        "data": {
+          "fv_sensor": "Solar production sensor (W)",
+          "consumption_sensor": "Grid consumption sensor (W)",
+          "battery_sensor": "Battery state of charge sensor (%)",
+          "fv_margin_w": "Minimum surplus to turn on (W)",
+          "soc_min": "Minimum battery charge to turn on (%)",
+          "fv_priority": "Turn-on priority (lower number = first)",
+          "fv_stagger_minutes": "Minimum gap between turn-ons/offs (min)",
+          "fv_shutoff_enabled": "▶ Automatic turn-off when solar drops",
+          "fv_shutoff_delay_min": "Consecutive insufficient samples before turning off",
+          "fv_shutoff_threshold": "Solar surplus threshold for turn-off (W)",
+          "sunset_info": "🌅 Today's sunset time (informational)",
+          "cutoff_info": "⏱️ Manual control cutoff time (informational)",
+          "simple_sunset_anticipate_h": "Hours before sunset to stop automatic control",
+          "fv_shutoff_manual": "Turn off even if manually turned on"
+        },
+        "data_description": {
+          "fv_sensor": "Watts produced by panels in real time. Example: sensor.solar_panels_total.",
+          "consumption_sensor": "Instantaneous grid consumption. Example: sensor.grid_consumption.",
+          "battery_sensor": "Battery charge percentage. Example: sensor.battery_soc.",
+          "fv_margin_w": "Surplus required above consumption to turn on. Example: 1200W → turns on only if producing 1200W more than consuming.",
+          "soc_min": "Minimum battery charge to enable turn-on. Example: 70 → turns on only with battery ≥ 70%.",
+          "fv_priority": "With multiple ACs, lower number turns on first and off last. Example: bedroom=10, living=20.",
+          "fv_stagger_minutes": "Pause between successive turn-ons to avoid peaks. Example: 5 minutes.",
+          "fv_shutoff_enabled": "If enabled: turns off when surplus stays below threshold for N consecutive samples.",
+          "fv_shutoff_delay_min": "Consecutive samples below threshold before turning off. Sliding window. Example: 5 samples at 1-min interval = 5 confirmed minutes.",
+          "fv_shutoff_threshold": "Surplus must stay below this for all N samples. Value 0 = turns off when FV < consumption. Example: 500W.",
+          "sunset_info": "Time the sun sets today at your location, calculated automatically by Home Assistant. Updates every time you open these settings.",
+          "cutoff_info": "Automatically calculated: sunset minus the configured hours. After this time the automation stops controlling the AC turned on manually and stops automatic solar turn-ons. Updates every time you open these settings.",
+          "simple_sunset_anticipate_h": "How many hours before sunset the automation stops intervening. Automatic solar turn-on is active from end of night mode until this time — calculated automatically every day based on the season. Minimum 2 hours. Example: sunset 19:40 with 2 hours → automation active until 17:40.",
+          "fv_shutoff_manual": "If enabled, the thermostat will turn off the AC even when it was manually turned on by the user and solar production is insufficient."
+        }
+      },
+      "simple_notifiche": {
+        "title": "Thermostat — Notifications",
+        "description": "Configure Google Home voice alerts and Telegram messages separately. You can enable different channels for each event.",
+        "data": {
+          "tts_media_players": "━━━ GOOGLE HOME ━━━",
+          "tts_engine_entity": "TTS engine (leave empty for automatic)",
+          "simple_notify_tts_ac_on": "▶ AC turns on",
+          "simple_notify_tts_ac_off": "▶ AC turns off",
+          "simple_notify_tts_temp_change": "▶ Temperature change",
+          "simple_notify_tts_window_open": "▶ Window opens",
+          "simple_notify_tts_window_close": "▶ Window closes",
+          "simple_notify_tts_door_open": "▶ Door opens",
+          "simple_notify_tts_door_close": "▶ Door closes",
+          "simple_notify_tts_night_start": "▶ Night mode starts",
+          "simple_notify_tts_night_end": "▶ Night mode ends",
+          "simple_quiet_night_tts": "▶ Silence Google Home during night hours",
+          "notify_targets": "━━━ TELEGRAM ━━━",
+          "notify_chat_ids": "Telegram chat IDs (alternative to notify entities)",
+          "simple_notify_tel_ac_on": "▶ AC turns on",
+          "simple_notify_tel_ac_off": "▶ AC turns off",
+          "simple_notify_tel_temp_change": "▶ Temperature change",
+          "simple_notify_tel_window_open": "▶ Window opens",
+          "simple_notify_tel_window_close": "▶ Window closes",
+          "simple_notify_tel_door_open": "▶ Door opens",
+          "simple_notify_tel_door_close": "▶ Door closes",
+          "simple_notify_tel_night_start": "▶ Night mode starts",
+          "simple_notify_tel_night_end": "▶ Night mode ends",
+          "simple_quiet_night_notify": "▶ Silence Telegram during night hours",
+          "simple_notify_tel_ac_off_fv": "▶ Turn off due to insufficient solar"
+        },
+        "data_description": {
+          "tts_media_players": "Select Google Home or Nest speakers. Leave empty to disable voice.",
+          "tts_engine_entity": "TTS engine. Leave empty for the HA default.",
+          "simple_notify_tts_ac_on": "Google Home announces when the AC turns on automatically.",
+          "simple_notify_tts_ac_off": "Google Home announces when the AC turns off after reaching the target temperature.",
+          "simple_notify_tts_temp_change": "Google Home announces every room temperature change detected.",
+          "simple_notify_tts_window_open": "Google Home alerts when window opens (AC turns off after 5 minutes if still open).",
+          "simple_notify_tts_window_close": "Google Home alerts when window closes and AC turns back on.",
+          "simple_notify_tts_door_open": "Google Home alerts when door opens. Informational only.",
+          "simple_notify_tts_door_close": "Google Home alerts when door closes. Informational only.",
+          "simple_notify_tts_night_start": "Google Home announces start of night mode with nighttime target.",
+          "simple_notify_tts_night_end": "Google Home announces end of night mode.",
+          "simple_quiet_night_tts": "If enabled: Google Home does not speak during night hours. Window alerts remain always active.",
+          "notify_targets": "HA notify entities for Telegram. Example: notify.telegram_user.",
+          "notify_chat_ids": "Alternative to notify entities: Telegram chat IDs separated by comma.",
+          "simple_notify_tel_ac_on": "Telegram alerts when AC turns on automatically.",
+          "simple_notify_tel_ac_off": "Telegram alerts when AC turns off after reaching target temperature.",
+          "simple_notify_tel_temp_change": "Telegram alerts on every temperature change. Can be frequent.",
+          "simple_notify_tel_window_open": "Telegram alerts when window opens.",
+          "simple_notify_tel_window_close": "Telegram alerts when window closes.",
+          "simple_notify_tel_door_open": "Telegram alerts when door opens. Informational only.",
+          "simple_notify_tel_door_close": "Telegram alerts when door closes. Informational only.",
+          "simple_notify_tel_night_start": "Telegram alerts at start of night mode.",
+          "simple_notify_tel_night_end": "Telegram alerts at end of night mode.",
+          "simple_quiet_night_notify": "If enabled: Telegram does not send automatic messages during night hours.",
+          "simple_notify_tel_ac_off_fv": "Telegram alerts when AC turns off because solar production is insufficient. Message indicates this is an automatic FV shutdown, not due to temperature reached."
+        }
+      },
+      "cambia_modalita": {
+        "title": "Change configuration mode",
+        "description": "You can change the configuration mode. Note: changing mode keeps the old parameters but you may need to reconfigure some settings.",
+        "data": {
+          "config_mode": "Configuration mode"
+        },
+        "data_description": {
+          "config_mode": "🟢 SIMPLE — Few essential fields, automatic logic.\n🔵 SIMPLE WITH SOLAR — Like Simple + solar management.\n⚙️ FULL — All advanced parameters."
+        }
+      },
+      "protezione_potenza": {
+        "title": "Power protection — Prevent circuit breaker trip",
+        "description": "Configure automatic protection against circuit breaker trips. If consumption exceeds the set threshold, the AC turns off automatically and turns back on when consumption drops.",
+        "data": {
+          "power_limit_enabled": "▶ Enable power protection",
+          "power_limit_sensor": "Consumption sensor to monitor (W)",
+          "power_limit_mode": "Management mode",
+          "power_limit_max_w": "Maximum consumption threshold before turn-off (W)",
+          "power_limit_hysteresis_w": "Consumption reduction required to turn back on (W)",
+          "power_limit_restore_min": "Minutes of low consumption before turning back on",
+          "power_limit_notify_tts": "▶ Google Home voice alert",
+          "power_limit_notify_telegram": "▶ Telegram alert"
+        },
+        "data_description": {
+          "power_limit_enabled": "If enabled: the thermostat monitors consumption and automatically turns off the AC if it exceeds the threshold for at least 30 seconds (anti-spike). It turns back on when consumption drops enough.",
+          "power_limit_sensor": "Sensor measuring the electrical consumption of the circuit to protect. Can be total house consumption or a single circuit meter. Example: sensor.living_room_consumption.",
+          "power_limit_mode": "Single AC: manages only this AC independently. Multiple AC: coordinates shutdown and restart in cascade with other thermostats that have the same protection active, using the already configured priority.",
+          "power_limit_max_w": "If consumption exceeds this value for at least 30 seconds, the AC turns off. The 30 seconds prevent shutdowns due to momentary spikes (e.g. washing machine start, induction hob). Example: 3500W → turns off if consuming more than 3500W.",
+          "power_limit_hysteresis_w": "How many Watts consumption must drop below the maximum threshold before the AC can turn back on. Example: threshold 3500W, hysteresis 800W → turns on only when consumption drops below 2700W. Avoids rapid on/off cycles.",
+          "power_limit_restore_min": "How many minutes consumption must stay below the restart threshold before the AC turns back on. Example: 5 minutes → if consumption drops but rises again within 5 minutes, AC does not restart.",
+          "power_limit_notify_tts": "If enabled: Google Home announces when the AC is turned off or on due to power protection.",
+          "power_limit_notify_telegram": "If enabled: Telegram alerts when the AC is turned off or on due to power protection."
+        }
+      },
+      "protezione_potenza_completo": {
+        "title": "Power protection — Prevent circuit breaker trip",
+        "description": "Configure automatic protection against circuit breaker trips. If consumption exceeds the set threshold, the AC turns off automatically and turns back on when consumption drops.",
+        "data": {
+          "power_limit_enabled": "▶ Enable power protection",
+          "power_limit_sensor": "Consumption sensor to monitor (W)",
+          "power_limit_mode": "Management mode",
+          "power_limit_max_w": "Maximum consumption threshold before turn-off (W)",
+          "power_limit_hysteresis_w": "Consumption reduction required to turn back on (W)",
+          "power_limit_restore_min": "Minutes of low consumption before turning back on",
+          "power_limit_notify_tts": "▶ Google Home voice alert",
+          "power_limit_notify_telegram": "▶ Telegram alert",
+          "power_limit_msg_off": "Turn-off message (template)",
+          "power_limit_msg_on": "Turn-on message (template)"
+        },
+        "data_description": {
+          "power_limit_enabled": "If enabled: the thermostat monitors consumption and automatically turns off the AC if it exceeds the threshold for at least 30 seconds (anti-spike). It turns back on when consumption drops enough.",
+          "power_limit_sensor": "Sensor measuring the electrical consumption of the circuit to protect. Can be total house consumption or a single circuit meter. Example: sensor.living_room_consumption.",
+          "power_limit_mode": "Single AC: manages only this AC independently. Multiple AC: coordinates shutdown and restart in cascade with other thermostats that have the same protection active, using the already configured priority.",
+          "power_limit_max_w": "If consumption exceeds this value for at least 30 seconds, the AC turns off. The 30 seconds prevent shutdowns due to momentary spikes (e.g. washing machine start, induction hob). Example: 3500W → turns off if consuming more than 3500W.",
+          "power_limit_hysteresis_w": "How many Watts consumption must drop below the maximum threshold before the AC can turn back on. Example: threshold 3500W, hysteresis 800W → turns on only when consumption drops below 2700W. Avoids rapid on/off cycles.",
+          "power_limit_restore_min": "How many minutes consumption must stay below the restart threshold before the AC turns back on. Example: 5 minutes → if consumption drops but rises again within 5 minutes, AC does not restart.",
+          "power_limit_notify_tts": "If enabled: Google Home announces when the AC is turned off or on due to power protection.",
+          "power_limit_notify_telegram": "If enabled: Telegram alerts when the AC is turned off or on due to power protection.",
+          "power_limit_msg_off": "Message sent when AC turns off due to excess consumption. Variables: {{ name }} = thermostat name, {{ consumo }} = current consumption in W.",
+          "power_limit_msg_on": "Message sent when AC turns back on after consumption drops. Variables: {{ name }} = thermostat name."
+        }
+      },
+      "emergenza_simple": {
+        "title": "Heat emergency",
+        "description": "Configure the 'Heat emergency' switch behavior. When manually activated, the thermostat completely ignores solar production and turns on the AC based only on temperature, like simple mode. It auto-deactivates 5 minutes before night mode or when temperature returns to normal.",
+        "data": {
+          "emergency_heat_active": "▶ Activate heat emergency now",
+          "emergency_heat_threshold": "Temperature above target to turn on in emergency (°C)",
+          "emergency_heat_end_threshold": "Temperature above target to consider emergency over (°C)",
+          "emergency_notify_tts": "▶ Google Home voice alert",
+          "emergency_notify_telegram": "▶ Telegram alert"
+        },
+        "data_description": {
+          "emergency_heat_active": "Activate or deactivate the heat emergency switch directly from here. When active the thermostat completely ignores solar production and turns on the AC based only on temperature. Deactivates automatically 5 minutes before night mode or when temperature returns within the configured threshold.",
+          "emergency_heat_threshold": "How many degrees above target to turn on in emergency mode. Example: 1.5°C with target 25°C → turns on from 26.5°C ignoring solar.",
+          "emergency_heat_end_threshold": "When temperature drops within this margin of target, emergency is considered over and switch deactivates automatically. Example: 0.7°C with target 25°C → emergency ends when it drops below 25.7°C.",
+          "emergency_notify_tts": "If enabled: Google Home announces when heat emergency starts and ends.",
+          "emergency_notify_telegram": "If enabled: Telegram alerts when heat emergency starts and ends."
+        }
+      },
+      "emergenza_completo": {
+        "title": "Heat emergency",
+        "description": "Configure the 'Heat emergency' switch behavior. When manually activated, the thermostat completely ignores solar production and turns on the AC based only on temperature, like simple mode. It auto-deactivates 5 minutes before night mode or when temperature returns to normal.",
+        "data": {
+          "emergency_heat_active": "▶ Activate heat emergency now",
+          "emergency_heat_threshold": "Temperature above target to turn on in emergency (°C)",
+          "emergency_heat_end_threshold": "Temperature above target to consider emergency over (°C)",
+          "emergency_notify_tts": "▶ Google Home voice alert",
+          "emergency_notify_telegram": "▶ Telegram alert",
+          "emergency_msg_on": "Emergency start message (template)",
+          "emergency_msg_off": "Emergency end message (template)"
+        },
+        "data_description": {
+          "emergency_heat_active": "Activate or deactivate the heat emergency switch directly from here. When active the thermostat completely ignores solar production and turns on the AC based only on temperature. Deactivates automatically 5 minutes before night mode or when temperature returns within the configured threshold.",
+          "emergency_heat_threshold": "How many degrees above target to turn on in emergency mode. Example: 1.5°C with target 25°C → turns on from 26.5°C ignoring solar.",
+          "emergency_heat_end_threshold": "When temperature drops within this margin of target, emergency is considered over and switch deactivates automatically. Example: 0.7°C with target 25°C → emergency ends when it drops below 25.7°C.",
+          "emergency_notify_tts": "If enabled: Google Home announces when heat emergency starts and ends.",
+          "emergency_notify_telegram": "If enabled: Telegram alerts when heat emergency starts and ends.",
+          "emergency_msg_on": "Message sent when heat emergency starts. Variables: {{ name }} = thermostat name, {{ temp }} = current temperature, {{ target }} = target temperature.",
+          "emergency_msg_off": "Message sent when heat emergency ends. Same variables available."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1077 @@
+{
+  "selector": {
+    "profile": {
+      "options": {
+        "bilanciato": "Bilanciato",
+        "aggressivo": "Aggressivo",
+        "delicato": "Delicato",
+        "personalizzato": "Personalizzato"
+      }
+    },
+    "config_mode": {
+      "options": {
+        "semplificato": "🟢 Semplificato",
+        "semplificato_fv": "🔵 Semplificato con fotovoltaico",
+        "completo": "⚙️ Completo (OBSOLETO — verrà rimosso in futuro)"
+      }
+    },
+    "power_limit_mode": {
+      "options": {
+        "unico": "🔵 Unico clima sul contatore",
+        "multiplo": "🟢 Più clima sullo stesso contatore"
+      }
+    },
+    "season_mode": {
+      "options": {
+        "estate": "☀️ Estate",
+        "inverno": "❄️ Inverno",
+        "auto": "🔄 Auto (entrambe le stagioni)",
+        "manuale": "✋ Manuale (solo timer/sicurezza, resto disattivato)",
+        "off": "⛔ Off (tutto disattivato, incluso il timer)"
+      }
+    }
+  },
+  "config": {
+    "step": {
+      "user": {
+        "title": "Termostato Intelligente — Scegli la modalità",
+        "description": "Scegli come vuoi configurare il termostato. Puoi cambiare la modalità in qualsiasi momento dalle opzioni.",
+        "data": {
+          "config_mode": "Modalità di configurazione"
+        },
+        "data_description": {
+          "config_mode": "🟢 SEMPLIFICATO — Pochi campi essenziali. Imposti solo il climatizzatore, la temperatura desiderata di giorno e di notte, e quali avvisi ricevere. Il sistema gestisce tutto automaticamente. Ideale per chi vuole semplicità senza rinunciare a un controllo intelligente della temperatura.\n\n🔵 SEMPLIFICATO CON FOTOVOLTAICO — Come il semplificato, ma aggiunge la gestione del fotovoltaico: il clima si accende quando stai producendo abbastanza energia dai pannelli e si spegne quando la produzione cala.\n\n⚙️ COMPLETO — Accesso a tutti i parametri avanzati: profili termici, calibrazione sonda, boost presenza, fascia di silenzio separata per Google e Telegram, limiti di notifica, e molto altro. Per chi vuole il massimo controllo sul comportamento del termostato."
+        }
+      },
+      "profilo": {
+        "title": "Profilo di regolazione",
+        "description": "Scegli come il termostato deve comportarsi. Il profilo determina quanto velocemente il sistema raffredda e quanto è sensibile alle variazioni di temperatura.",
+        "data": {
+          "profile": "Profilo di regolazione"
+        },
+        "data_description": {
+          "profile": "🔵 BILANCIATO (consigliato) — Si accende a +1.5°C dal target, ventola alta da +2.0°C. Regolazione graduale per uso quotidiano.\n\n🔴 AGGRESSIVO — Si accende a +1.2°C, ventola alta da +1.6°C. Raffredda più velocemente, per stanze grandi o molto esposte al sole.\n\n🟢 DELICATO — Si accende a +1.8°C, ventola alta da +2.4°C. Silenzioso e discreto, perfetto per dormire.\n\n⚙️ PERSONALIZZATO — Imposta manualmente ogni soglia nel passo successivo."
+        }
+      },
+      "soglie_termiche": {
+        "title": "Soglie termiche personalizzate",
+        "description": "Questi parametri controllano esattamente come il termostato reagisce alla temperatura. Visibili solo se hai scelto il profilo Personalizzato.",
+        "data": {
+          "target_temp_default": "Temperatura target iniziale (°C)",
+          "extreme_offset": "Soglia caldo estremo sopra il target (°C)",
+          "hot_offset": "Soglia caldo forte sopra il target (°C)",
+          "range_offset": "Soglia caldo lieve sopra il target (°C)",
+          "below_offset": "Margine sotto il target per rallentare (°C)",
+          "turn_on_offset": "Scarto minimo per accendere da fotovoltaico (°C)",
+          "temp_delta": "Delta setpoint nelle fasce caldo/forte (°C)",
+          "extreme_delta": "Delta setpoint nella fascia caldo estremo (°C)",
+          "manual_shutoff_timer_min": "Timer spegnimento dopo accensione manuale (minuti)",
+          "manual_shutoff_timer_enabled": "Attivare lo spegnimento automatico se acceso manualmente?"
+        },
+        "data_description": {
+          "target_temp_default": "La temperatura desiderata nella stanza. Esempio: 25°C.",
+          "extreme_offset": "Sopra target + questo: ventola al massimo e setpoint molto basso. Esempio: 2.0°C → caldo estremo sopra 27°C.",
+          "hot_offset": "Sopra target + questo: ventola media e setpoint basso. Esempio: 1.5°C → caldo forte tra 26.5 e 27°C.",
+          "range_offset": "Sopra target + questo: ventola bassa e setpoint ridotto. Esempio: 0.2°C → caldo lieve tra 25.2 e 26.5°C.",
+          "below_offset": "Sotto target - questo: il clima rallenta per non raffreddare troppo. Esempio: 0.1°C → rallenta sotto 24.9°C.",
+          "turn_on_offset": "Accende da FV solo se stanza > target + questo. Esempio: 1.5°C → accende solo sopra 26.5°C.",
+          "temp_delta": "Di quanto si abbassa il setpoint nelle fasce normali. Esempio: 1.0°C → invia 24°C con target 25°C.",
+          "extreme_delta": "Di quanto si abbassa il setpoint in caldo estremo. Esempio: 2.0°C → invia 23°C in caldo estremo.",
+          "manual_shutoff_timer_min": "Se attivato dalla card, dopo un'accensione manuale il climatizzatore si spegne automaticamente dopo questi minuti, indipendentemente dal master switch — utile per un uso completamente manuale (es. uno scaldotto). Imposta 0 per non offrire mai questa funzione nella card.",
+          "manual_shutoff_timer_enabled": "Se attivo, il timer di spegnimento (impostato qui sotto) parte automaticamente ad ogni accensione manuale, senza bisogno di attivarlo ogni volta dalla card — puoi comunque attivarlo/disattivarlo in qualsiasi momento dalla card. Vale sempre, anche se il master switch dell'automazione è disattivato."
+        }
+      },
+      "energia": {
+        "title": "Fotovoltaico — Accensione e spegnimento automatico",
+        "description": "Configura come il termostato usa la produzione fotovoltaica per accendere e spegnere il climatizzatore automaticamente. Lascia i sensori vuoti per disabilitare completamente questa funzione.",
+        "data": {
+          "fv_sensor": "Sensore produzione fotovoltaica (W)",
+          "consumption_sensor": "Sensore consumo rete (W)",
+          "battery_sensor": "Sensore stato di carica batteria (%)",
+          "fv_margin_w": "Surplus minimo per accendere (W)",
+          "soc_min": "Carica batteria minima per accendere (%)",
+          "fv_start_time": "Inizio fascia di accensione automatica",
+          "fv_end_time": "Fine fascia di accensione automatica",
+          "fv_priority": "Priorità accensione (numero più basso = prima)",
+          "fv_stagger_minutes": "Distanza minima tra accensioni/spegnimenti (min)",
+          "fv_shutoff_enabled": "▶ Spegnimento automatico quando il FV cala",
+          "fv_shutoff_delay_min": "Campioni insufficienti consecutivi prima di spegnere",
+          "fv_shutoff_threshold": "Soglia surplus FV per lo spegnimento (W)",
+          "fv_shutoff_extra_hours": "Ore extra dopo fine fascia in cui può spegnere",
+          "fv_shutoff_manual": "Spegni anche se acceso manualmente",
+          "simple_no_reon_manual_off": "Non accendere se spento manualmente",
+          "simple_no_reon_manual_off_hours": "Ore di blocco riaccensione dopo spegnimento manuale",
+          "fv_sensor_offline_shutoff_enabled": "Spegni se sensore FV offline",
+          "fv_sensor_offline_shutoff_min": "Minuti prima di spegnere se il sensore FV è offline",
+          "fv_sensor_offline_notify_tts": "Avviso vocale per sensore FV offline",
+          "fv_sensor_offline_notify_telegram": "Avviso Telegram per sensore FV offline"
+        },
+        "data_description": {
+          "fv_sensor": "Watt prodotti dai pannelli in tempo reale. Esempio: sensor.somma_sensori_zcs_pannelli.",
+          "consumption_sensor": "Consumo istantaneo dalla rete. Esempio: sensor.zcs_reteac_consumo_attuale.",
+          "battery_sensor": "Percentuale di carica della batteria. Esempio: sensor.batteria_soc.",
+          "fv_margin_w": "Surplus richiesto oltre il consumo per accendere. Esempio: 1200W → accende solo se produci 1200W più di quello che consumi.",
+          "soc_min": "Carica minima della batteria per abilitare l'accensione. Esempio: 70 → accende solo con batteria ≥ 70%.",
+          "fv_start_time": "Non accende automaticamente prima di quest'ora. Esempio: 10:00.",
+          "fv_end_time": "Non accende automaticamente dopo quest'ora. Esempio: 16:00.",
+          "fv_priority": "Con più termostati, quello col numero più basso accende prima e spegne per ultimo. Esempio: camera=10, sala=20.",
+          "fv_stagger_minutes": "Pausa tra l'accensione di un clima e il successivo per evitare picchi di consumo. Esempio: 5 minuti.",
+          "fv_shutoff_enabled": "Se attivato: spegne il clima quando il surplus FV resta sotto soglia per N campioni consecutivi. Con più termostati spegne prima quello con priorità numerica più alta.",
+          "fv_shutoff_delay_min": "Quanti campioni consecutivi (uno per ogni ciclo di aggiornamento generale) di surplus sotto soglia devono accumularsi prima di spegnere. Esempio: 5 campioni con ciclo di aggiornamento di 5 minuti = 25 minuti confermati. La finestra è scorrevole: un singolo valore alto non azzera tutto, ma fa slittare il buffer.",
+          "fv_shutoff_threshold": "Il surplus (produzione - consumo) deve essere sotto questo valore in TUTTI gli ultimi N campioni per far scattare lo spegnimento. Valore 0 = spegne quando FV non copre il consumo. Valore positivo = spegne prima, quando il surplus scende sotto X Watt. Esempio: 500W → spegne quando stai producendo meno di 500W di surplus per N campioni consecutivi.",
+          "fv_shutoff_extra_hours": "Ore extra dopo la fine fascia in cui può ancora spegnere. Esempio: fascia finisce alle 16:00, extra 1h → può spegnere fino alle 17:00.",
+          "fv_shutoff_manual": "Se attivo, lo spegnimento per calo FV si applica anche a un climatizzatore acceso manualmente, non solo a quelli accesi automaticamente dal fotovoltaico.",
+          "simple_no_reon_manual_off": "Se attivo, dopo uno spegnimento manuale il termostato non riaccende automaticamente il climatizzatore per il numero di ore configurato qui sotto.",
+          "simple_no_reon_manual_off_hours": "Per quante ore, dopo uno spegnimento manuale, il termostato evita di riaccendere automaticamente il climatizzatore.",
+          "fv_sensor_offline_shutoff_enabled": "Se attivo, un climatizzatore acceso dal fotovoltaico viene spento automaticamente quando il sensore di produzione FV smette di rispondere per troppo tempo — senza quel dato non possiamo più sapere se il sole c'è davvero. Si applica SOLO ai climatizzatori accesi dal fotovoltaico: un'accensione manuale non viene mai toccata. Di notte non ha alcun effetto, dato che l'accensione notturna non passa mai dal controllo fotovoltaico.",
+          "fv_sensor_offline_shutoff_min": "Dopo quanti minuti di sensore FV offline spegnere questo specifico climatizzatore. Una notifica di allerta parte comunque entro pochi minuti dal rilevamento, indipendentemente da questo valore.",
+          "fv_sensor_offline_notify_tts": "Avviso vocale (Google Home) quando il sensore FV va offline e quando questo climatizzatore viene spento di conseguenza.",
+          "fv_sensor_offline_notify_telegram": "Avviso Telegram quando il sensore FV va offline e quando questo climatizzatore viene spento di conseguenza."
+        }
+      },
+      "modalita_notturna": {
+        "title": "Modalità notturna",
+        "description": "Configura il comportamento notturno del termostato. Puoi alzare leggermente il target, abilitare l'accensione automatica, impostare lo spegnimento quando si raggiunge il target, e spegnere il clima alla fine della fascia notturna.",
+        "data": {
+          "night_start_time": "Inizio modalità notturna",
+          "night_end_time": "Fine modalità notturna",
+          "night_offset": "Gradi extra al target di notte (°C)",
+          "night_ac_enabled": "▶ Accensione automatica notturna",
+          "night_turn_on_offset": "Gradi sopra il target notte per accendere (°C)",
+          "night_shutoff_enabled": "▶ Spegnimento automatico quando si raggiunge il target",
+          "night_shutoff_delta": "Tolleranza sopra il target notte (°C)",
+          "night_shutoff_min": "Minuti consecutivi in temperatura prima di spegnere",
+          "night_end_shutoff_enabled": "▶ Spegni il clima alla fine della modalità notturna (sempre)",
+          "night_end_shutoff_auto_only": "▶ Spegni alla fine della notte solo se acceso automaticamente",
+          "presence_boost_enabled": "▶ Boost ventola se c'è presenza e fa ancora caldo",
+          "presence_boost_minutes": "Minuti di presenza continua prima del boost",
+          "presence_boost_offset": "Gradi sopra il target per attivare il boost (°C)",
+          "window_delay_minutes": "Minuti con finestra aperta prima di spegnere il clima",
+          "update_interval_minutes": "Frequenza di controllo del termostato (minuti)",
+          "calibration_max_offset": "Correzione massima sonda interna clima (°C)",
+          "min_below_internal": "Margine minimo setpoint sotto sonda interna (°C)"
+        },
+        "data_description": {
+          "night_start_time": "Da quest'ora il termostato entra in modalità notturna. La fascia può attraversare la mezzanotte. Esempio: 23:00.",
+          "night_end_time": "A quest'ora il termostato esce dalla modalità notturna. Esempio: 07:00.",
+          "night_offset": "Di notte il target diventa target + questo valore. Esempio: target 25°C + offset 1°C = target notte 26°C. Imposta 0 per non cambiare nulla.",
+          "night_ac_enabled": "Se attivato: accende il clima di notte se la stanza supera target notte + soglia, senza bisogno di FV.",
+          "night_turn_on_offset": "Quanto deve superare il target notturno per far scattare l'accensione. Esempio: target notte 26°C, soglia 1.5°C → accende sopra 27.5°C.",
+          "night_shutoff_enabled": "Se attivato: spegne il clima quando la stanza rimane in temperatura per i minuti configurati. Funziona con qualsiasi tipo di accensione.",
+          "night_shutoff_delta": "Tolleranza sopra il target notte. Esempio: target 26°C, delta 0.3°C → in temperatura quando ≤ 26.3°C. Se sale oltre, il conteggio riparte.",
+          "night_shutoff_min": "Minuti consecutivi in temperatura prima di spegnere. Esempio: 30 minuti.",
+          "night_end_shutoff_enabled": "Se attivato: quando la modalità notturna termina (es. alle 07:00), il climatizzatore viene spento SEMPRE, indipendentemente da chi lo aveva acceso (tu manualmente, FV o accensione notturna automatica). Utile per non lasciare il clima acceso tutta la mattina.",
+          "night_end_shutoff_auto_only": "Se attivato: quando la modalità notturna termina, il climatizzatore viene spento SOLO SE era stato acceso automaticamente dalla modalità notturna (non se lo hai acceso tu a mano o dal FV). Può essere attivato insieme all'opzione 'sempre' — in quel caso 'sempre' ha la precedenza.",
+          "presence_boost_enabled": "Se attivato: quando il sensore di presenza rileva una persona per i minuti configurati e la stanza è ancora calda, alza la ventola a media.",
+          "presence_boost_minutes": "Minuti di presenza continua prima del boost. Esempio: 10 minuti.",
+          "presence_boost_offset": "Boost solo se stanza > target + questo. Esempio: 1°C → boost solo sopra 26°C con target 25°C.",
+          "window_delay_minutes": "Minuti di attesa prima di spegnere per finestra aperta. Esempio: 5 minuti → avvisa subito, spegne dopo 5 minuti.",
+          "update_interval_minutes": "Ogni quanti minuti il termostato controlla e aggiorna. Esempio: 5 minuti.",
+          "calibration_max_offset": "Correzione massima per differenza tra sonda stanza e sonda interna del clima. Esempio: 3°C.",
+          "min_below_internal": "Il setpoint resta sempre almeno questo valore sotto la sonda interna del clima. Esempio: 1°C → se il clima legge 24°C, il setpoint non supera 23°C."
+        }
+      },
+      "notifiche": {
+        "title": "Notifiche e fascia di silenzio",
+        "description": "Configura su quali dispositivi il termostato parla e scrive. Puoi scegliere separatamente cosa ricevere su Google Home e Telegram, e in quali orari silenziare gli avvisi.",
+        "data": {
+          "tts_media_players": "Dispositivi Google Home / media player per la voce",
+          "tts_engine_entity": "Motore TTS (lascia vuoto per automatico)",
+          "tts_message_open": "Messaggio vocale per finestra aperta (template)",
+          "notify_targets": "Entità notify per Telegram",
+          "notify_chat_ids": "Chat ID Telegram (alternativa alle entità notify)",
+          "notify_temp_change_enabled": "▶ Notifica Telegram ad ogni cambio setpoint",
+          "notify_temp_change_limit_enabled": "▶ Limita le notifiche cambio setpoint",
+          "notify_temp_change_limit_min": "Intervallo minimo tra notifiche cambio setpoint (min)",
+          "notify_temp_change_message": "Messaggio cambio setpoint (template)",
+          "notify_power_tts": "▶ Voce Google per accensione/spegnimento automatico FV e notte",
+          "notify_power_notify": "▶ Telegram per accensione/spegnimento automatico FV e notte",
+          "notify_night_end_tts": "▶ Voce Google allo spegnimento di fine modalità notturna",
+          "notify_night_end_notify": "▶ Telegram allo spegnimento di fine modalità notturna",
+          "door_alert_enabled": "▶ Avviso apertura e chiusura porta",
+          "door_alert_tts": "▶ Avviso porta via voce Google",
+          "door_alert_notify": "▶ Avviso porta via Telegram",
+          "door_alert_message": "Messaggio avviso porta (template)",
+          "quiet_enabled": "▶ Attiva fascia di silenzio",
+          "quiet_start_time": "Inizio fascia di silenzio",
+          "quiet_end_time": "Fine fascia di silenzio",
+          "quiet_tts": "▶ Silenzia la voce Google nella fascia",
+          "quiet_notify": "▶ Silenzia Telegram nella fascia"
+        },
+        "data_description": {
+          "tts_media_players": "Altoparlanti Google Home o media_player per i messaggi vocali. Esempio: media_player.google_camera.",
+          "tts_engine_entity": "Motore TTS. Lascia vuoto per usare quello predefinito di Home Assistant.",
+          "tts_message_open": "Messaggio quando la finestra si apre. Variabili: {{ delay }}, {{ name }}, {{ target }}.",
+          "notify_targets": "Entità notify di HA per Telegram. Esempio: notify.telegram_mimmo.",
+          "notify_chat_ids": "Chat ID Telegram separati da virgola. Solo se non hai entità notify.",
+          "notify_temp_change_enabled": "Se attivato: Telegram ad ogni cambio setpoint. Può essere frequente.",
+          "notify_temp_change_limit_enabled": "Se attivato: le notifiche Telegram di cambio setpoint vengono inviate al massimo una volta ogni X minuti. Utile per ridurre i messaggi quando il termostato aggiusta frequentemente il setpoint. La fascia di silenzio ha sempre la precedenza e blocca le notifiche indipendentemente da questa impostazione.",
+          "notify_temp_change_limit_min": "Ogni quanti minuti al massimo può arrivare una notifica di cambio setpoint. Esempio: 30 minuti → anche se il setpoint cambia ogni 5 minuti, la notifica arriva al massimo ogni 30 minuti.",
+          "notify_temp_change_message": "Variabili: {{ name }}, {{ old_temp }}, {{ new_temp }}, {{ fan_mode }}, {{ room_temp }}, {{ target }}.",
+          "notify_power_tts": "Se attivato: Google Home parla quando il clima si accende/spegne automaticamente per FV o modalità notturna, spiegando il motivo.",
+          "notify_power_notify": "Se attivato: Telegram quando il clima si accende/spegne automaticamente per FV o modalità notturna. Attivo di default.",
+          "notify_night_end_tts": "Se attivato: Google Home pronuncia un messaggio quando il clima viene spento alla fine della modalità notturna. Canale separato dagli altri avvisi — puoi tenerlo attivo anche se gli altri sono silenziati.",
+          "notify_night_end_notify": "Se attivato: Telegram riceve un messaggio quando il clima viene spento alla fine della modalità notturna. Canale separato dagli altri avvisi. Attivo di default così sai sempre quando il clima si spegne al mattino.",
+          "door_alert_enabled": "Se attivato: avvisa sia all'apertura che alla chiusura della porta. Solo informativo, non agisce mai sul clima.",
+          "door_alert_tts": "Avviso porta via Google Home. Richiede 'Avviso porta' attivato.",
+          "door_alert_notify": "Avviso porta via Telegram. Richiede 'Avviso porta' attivato.",
+          "door_alert_message": "Messaggio avviso porta. Variabile: {{ name }}.",
+          "quiet_enabled": "Se attivato: nella fascia oraria configurata silenzia gli avvisi automatici secondo le preferenze sotto.",
+          "quiet_start_time": "Inizio silenzio. Può attraversare la mezzanotte. Esempio: 23:00.",
+          "quiet_end_time": "Fine silenzio. Esempio: 07:00.",
+          "quiet_tts": "Se attivato: Google Home non parla nella fascia di silenzio per accensioni/spegnimenti automatici.",
+          "quiet_notify": "Se attivato: Telegram sospende i messaggi di accensione/spegnimento nella fascia di silenzio."
+        }
+      },
+      "entita_completo": {
+        "title": "Termostato Intelligente — Entità principali",
+        "description": "Collega il climatizzatore e i sensori della stanza.",
+        "data": {
+          "name": "Nome del termostato",
+          "climate_entity": "Climatizzatore da pilotare",
+          "temp_sensor": "Sensore temperatura stanza",
+          "window_sensor": "Sensore finestra",
+          "presence_sensor": "Sensore presenza (opzionale)",
+          "door_sensor": "Sensore porta (opzionale)",
+          "window_detection_enabled": "Il rilevamento finestra influisce sul climatizzatore"
+        },
+        "data_description": {
+          "name": "Il nome con cui questo termostato apparirà in Home Assistant. Esempio: 'Camera da letto', 'Sala sopra', 'Sala giochi'.",
+          "climate_entity": "Il climatizzatore fisico che questo termostato controllerà. Esempio: climate.condizionatore_camera_da_letto.",
+          "temp_sensor": "Il sensore che misura la temperatura reale della stanza. Posizionalo lontano dal climatizzatore. Esempio: sensor.temperatura_camera_letto.",
+          "window_sensor": "Sensore binario 'on' quando la finestra è aperta. Esempio: binary_sensor.finestra_camera_letto.",
+          "presence_sensor": "Sensore di presenza opzionale per il boost ventola. Lascia vuoto per disabilitare.",
+          "door_sensor": "Sensore porta opzionale. Invia avvisi apertura/chiusura, non agisce mai sul clima. Lascia vuoto per disabilitare.",
+          "window_detection_enabled": "Se disattivato, la finestra non ha alcun effetto sul climatizzatore — né spegnimento quando si apre, né avviso quando accendi manualmente con la finestra già aperta. Utile se il sensore ha comportamenti poco affidabili in certe condizioni (es. non si aggiorna correttamente durante usi prolungati della cucina)."
+        }
+      },
+      "simple_entita": {
+        "title": "Termostato — Dispositivi",
+        "description": "Seleziona il climatizzatore e i sensori da collegare. Solo il climatizzatore è obbligatorio.",
+        "data": {
+          "name": "Nome del termostato",
+          "climate_entity": "Climatizzatore da pilotare",
+          "temp_sensor": "Sensore temperatura stanza (opzionale)",
+          "simple_external_sensor_stale_min": "Minuti prima di considerare bloccata la sonda esterna",
+          "window_sensor": "Sensore finestra (opzionale)",
+          "door_sensor": "Sensore porta (opzionale)",
+          "window_detection_enabled": "Il rilevamento finestra influisce sul climatizzatore"
+        },
+        "data_description": {
+          "name": "Il nome con cui questo termostato apparirà in Home Assistant. Esempio: 'Camera da letto'.",
+          "climate_entity": "Il climatizzatore fisico da controllare. Esempio: climate.condizionatore_camera.",
+          "temp_sensor": "Sensore di temperatura esterna alla stanza (es. sonda Zigbee). Se lasci vuoto, il termostato usa la sonda interna del climatizzatore. ⚠️ La sonda interna del clima legge solo valori interi (es. 25°C, non 25.3°C) quindi le soglie di accensione e spegnimento si adattano automaticamente. Esempio con sonda esterna: sensor.temperatura_camera_letto. Lascia vuoto per usare la sonda del clima.",
+          "simple_external_sensor_stale_min": "Se la sonda esterna (es. un sensore MQTT che dipende da un server remoto) smette di aggiornarsi per più di questi minuti, il termostato passa automaticamente alla sonda interna del climatizzatore, per evitare di regolare la temperatura basandosi su un dato vecchio. Torna da sola alla sonda esterna non appena questa riprende ad aggiornarsi. Default 45 minuti.",
+          "window_sensor": "Sensore binario che diventa 'on' quando la finestra è aperta. Se configurato: il termostato avvisa all'apertura e dopo 5 minuti spegne il clima, poi lo riaccende automaticamente quando la finestra viene chiusa. Lascia vuoto per non usare questa funzione. Esempio: binary_sensor.finestra_camera.",
+          "door_sensor": "Sensore binario che diventa 'on' quando la porta è aperta. Se configurato: invia un avviso quando la porta si apre o si chiude. Non agisce mai sul clima. Lascia vuoto per non usare questa funzione. Esempio: binary_sensor.porta_camera.",
+          "window_detection_enabled": "Se disattivato, la finestra non ha alcun effetto sul climatizzatore — né spegnimento quando si apre, né avviso quando accendi manualmente con la finestra già aperta. Utile se il sensore ha comportamenti poco affidabili in certe condizioni (es. non si aggiorna correttamente durante usi prolungati della cucina)."
+        }
+      },
+      "simple_temperature": {
+        "title": "Termostato — Temperature e orari",
+        "description": "Imposta la temperatura desiderata durante il giorno e durante la notte, con i relativi orari.",
+        "data": {
+          "simple_target_day": "Temperatura target di giorno (°C)",
+          "simple_target_night": "Temperatura target di notte (°C)",
+          "simple_night_start": "Inizio fascia notturna",
+          "simple_night_end": "Fine fascia notturna",
+          "night_end_shutoff_enabled": "▶ Spegni il clima alla fine della modalità notturna (sempre)",
+          "night_end_shutoff_auto_only": "▶ Spegni a fine notte solo se acceso automaticamente",
+          "simple_turn_on_offset": "Scarto minimo per accendere sopra il target (°C)",
+          "simple_shutoff_margin": "Margine sotto il target prima di spegnere (°C)",
+          "simple_no_auto_on_night": "▶ Non accendere automaticamente il clima di notte",
+          "simple_dry_enabled": "▶ Usa deumidificatore prima del raffreddamento",
+          "simple_dry_max_min": "Tempo massimo in deumidificazione prima di passare al raffreddamento (min)",
+          "manual_shutoff_timer_min": "Timer spegnimento dopo accensione manuale (minuti)",
+          "manual_shutoff_timer_enabled": "Attivare lo spegnimento automatico se acceso manualmente?",
+          "season_mode": "Modalità stagionale",
+          "simple_eco_day_enabled": "Modalità Eco invece di spegnere (giorno)",
+          "simple_eco_night_enabled": "Modalità Eco invece di spegnere (notte)"
+        },
+        "data_description": {
+          "simple_target_day": "La temperatura che vuoi mantenere nella stanza durante il giorno. Esempio: 25°C → con sonda esterna il clima parte sopra 26.5°C, con sonda interna sopra 27°C.",
+          "simple_target_night": "La temperatura desiderata di notte. Di solito qualche grado in più rispetto al giorno per non raffreddare troppo mentre si dorme. Esempio: 26°C.",
+          "simple_night_start": "Da quest'ora entra in modalità notturna con la temperatura target notturna. La fascia diurna inizia automaticamente alla fine della notte. Esempio: 23:00.",
+          "simple_night_end": "A quest'ora finisce la modalità notturna e inizia automaticamente quella diurna. Esempio: 07:00.",
+          "night_end_shutoff_enabled": "Se attivato: quando la modalità notturna termina (es. alle 07:00), il climatizzatore viene spento SEMPRE, indipendentemente da chi lo aveva acceso. Utile per non lasciare il clima acceso tutta la mattina.",
+          "night_end_shutoff_auto_only": "Se attivato: spegne il clima a fine notte SOLO SE era stato acceso automaticamente dal termostato. Se lo avevi acceso tu a mano, non fa nulla. Può essere usato insieme all'opzione 'sempre'.",
+          "simple_turn_on_offset": "Di quanti gradi la temperatura deve superare il target prima che il clima si accenda. Con sonda esterna il default è 0.8°C (es. target 25°C → accende da 25.8°C). Con sonda interna il default è 1.0°C (es. target 25°C → accende da 26°C). Valori più bassi = accende prima ma con più cicli. Valori più alti = accende solo quando fa davvero caldo. Nota: alla fine della modalità notturna c'è sempre 1 ora di pausa prima che il termostato ricominci ad accendere il clima, per evitare accensioni indesiderate causate dal cambio di target.",
+          "simple_shutoff_margin": "Di quanti gradi la temperatura deve scendere sotto il target prima che il termostato spenga il climatizzatore. Con sonda esterna (decimale) il margine è applicato esattamente come impostato. Con sonda interna (solo interi) il valore viene arrotondato alla stessa regola usata per i comandi di temperatura: 0.5°C o meno diventa 0 (nessun effetto, spegne appena raggiunto il target), oltre 0.5°C diventa 1 grado intero. Un margine più alto tiene la stanza più a lungo vicino al target, a costo di qualche minuto in più di funzionamento. Default 0.2°C.",
+          "simple_no_auto_on_night": "Se attivato: durante la fascia notturna il termostato non accende mai il clima automaticamente, anche se la temperatura supera la soglia configurata. Se il clima era già acceso (es. lo hai acceso tu manualmente o era rimasto acceso dal pomeriggio), continua comunque a regolarlo e a spegnerlo quando raggiunge la temperatura target o a fine notte. Utile se preferisci dormire senza climatizzatore anche nelle notti calde e vuoi gestirlo tu manualmente.",
+          "simple_dry_enabled": "Se attivato: quando la temperatura sale leggermente sopra il target, il climatizzatore parte prima in modalità deumidificatore (DRY) invece che in raffreddamento. Questo abbassa l'umidità e fa percepire la stanza più fresca consumando meno. Dopo il tempo massimo configurato (o se la temperatura sale ulteriormente) passa automaticamente al raffreddamento pieno. Particolarmente utile in climi umidi come quello pugliese, soprattutto nelle ore mattutine. Se la temperatura all'accensione è già troppo alta, parte direttamente in raffreddamento senza passare dal dry.",
+          "simple_dry_max_min": "Quanto tempo al massimo il climatizzatore rimane in deumidificazione prima di passare al raffreddamento. Se durante questo tempo la stanza si raffredda abbastanza, si spegne senza passare al raffreddamento. Se invece la temperatura rimane alta o sale, dopo questo tempo passa automaticamente a raffreddare. Esempio: 30 minuti → dà al deumidificatore mezz'ora per abbassare l'umidità, poi se non basta raffredda. Valori più bassi (10-15 min) = meno deumidificazione, passa prima a raffreddare. Valori più alti (45-60 min) = più deumidificazione, utile nelle mattine con molta afa.",
+          "manual_shutoff_timer_min": "Se attivato dalla card, dopo un'accensione manuale il climatizzatore si spegne automaticamente dopo questi minuti, indipendentemente dal master switch — utile per un uso completamente manuale (es. uno scaldotto). Imposta 0 per non offrire mai questa funzione nella card.",
+          "manual_shutoff_timer_enabled": "Se attivo, il timer di spegnimento (impostato qui sotto) parte automaticamente ad ogni accensione manuale, senza bisogno di attivarlo ogni volta dalla card — puoi comunque attivarlo/disattivarlo in qualsiasi momento dalla card. Vale sempre, anche se il master switch dell'automazione è disattivato.",
+          "season_mode": "Estate: gestisce solo il raffrescamento (comportamento di sempre). Inverno: gestisce solo il riscaldamento. Auto: gestisce entrambe, passando dall'una all'altra in base alla temperatura, con un tempo minimo tra un cambio e l'altro per evitare cicli ravvicinati in mezza stagione. Manuale: nessuna automazione — resta attivo solo il timer di spegnimento e le protezioni di sicurezza (es. finestra aperta) — il master switch viene disattivato automaticamente. Off: tutto spento, incluso il timer — zero interferenze, gestione completamente manuale col telecomando originale.",
+          "simple_eco_day_enabled": "Invece di spegnere il climatizzatore quando la temperatura scende sotto il target meno il margine, lo mette in modalità Eco e segue passivamente la lettura della sua sonda interna, senza spingere ulteriormente. Resta in Eco finché la temperatura della stanza non risale sopra il target più il margine, poi riparte normalmente ricalcolando la fascia corretta. Si applica solo di giorno — vedi il campo separato per la notte. Richiede che il climatizzatore supporti un preset \"eco\" (verificabile tra gli attributi dell'entità in Home Assistant).",
+          "simple_eco_night_enabled": "Stesso comportamento del campo \"Modalità Eco invece di spegnere (giorno)\", ma applicato durante la fascia notturna."
+        }
+      },
+      "energia_simple": {
+        "title": "Termostato — Fotovoltaico",
+        "description": "Configura i sensori del fotovoltaico. Il clima si accenderà automaticamente quando stai producendo abbastanza energia solare e si spegnerà quando la produzione cala.",
+        "data": {
+          "fv_sensor": "Sensore produzione fotovoltaica (W)",
+          "consumption_sensor": "Sensore consumo rete (W)",
+          "battery_sensor": "Sensore stato di carica batteria (%)",
+          "fv_margin_w": "Surplus minimo per accendere (W)",
+          "soc_min": "Carica batteria minima per accendere (%)",
+          "fv_priority": "Priorità accensione (numero più basso = prima)",
+          "fv_stagger_minutes": "Distanza minima tra accensioni/spegnimenti (min)",
+          "fv_shutoff_enabled": "▶ Spegnimento automatico quando il FV cala",
+          "fv_shutoff_total_minutes": "Minuti totali di calo FV prima di spegnere",
+          "fv_turn_on_total_minutes": "Minuti totali di surplus FV prima di accendere",
+          "fv_sensor_offline_shutoff_enabled": "Spegni se sensore FV offline",
+          "fv_sensor_offline_shutoff_min": "Minuti prima di spegnere se il sensore FV è offline",
+          "fv_sensor_offline_notify_tts": "Avviso vocale per sensore FV offline",
+          "fv_sensor_offline_notify_telegram": "Avviso Telegram per sensore FV offline",
+          "fv_shutoff_threshold": "Soglia surplus FV per lo spegnimento (W)",
+          "sunset_info": "🌅 Orario tramonto oggi (informativo)",
+          "cutoff_info": "⏱️ Orario limite controllo manuale (informativo)",
+          "simple_sunset_anticipate_h": "Ore di anticipo rispetto al tramonto",
+          "fv_shutoff_manual": "Spegni anche se acceso manualmente",
+          "fv_shutoff_manual_delay_min": "Ritardo prima di spegnere un'accensione manuale",
+          "simple_no_reon_manual_off": "Non accendere se spento manualmente",
+          "simple_no_reon_manual_off_hours": "Ore di blocco riaccensione dopo spegnimento manuale"
+        },
+        "data_description": {
+          "fv_sensor": "Watt prodotti dai pannelli in tempo reale. Esempio: sensor.somma_sensori_zcs_pannelli.",
+          "consumption_sensor": "Consumo istantaneo dalla rete. Esempio: sensor.zcs_reteac_consumo_attuale.",
+          "battery_sensor": "Percentuale di carica della batteria. Esempio: sensor.batteria_soc.",
+          "fv_margin_w": "Quanti Watt di surplus ci devono essere oltre al consumo per accendere il clima. Esempio: 1200W → accende solo se produci 1200W più di quello che consumi.",
+          "soc_min": "Percentuale minima di carica della batteria per accendere il clima. Esempio: 70 → accende solo con batteria ≥ 70%.",
+          "fv_priority": "Con più climatizzatori, quello col numero più basso accende prima e spegne per ultimo. Esempio: camera=10, sala=20.",
+          "fv_stagger_minutes": "Pausa tra l'accensione di un clima e il successivo per evitare picchi. Esempio: 5 minuti.",
+          "fv_shutoff_enabled": "Se attivato: spegne il clima quando il surplus FV resta sotto soglia per N campioni consecutivi. Con più termostati spegne prima quello con priorità numerica più alta.",
+          "fv_shutoff_total_minutes": "Per quanti minuti consecutivi il surplus fotovoltaico deve restare insufficiente prima che il termostato spenga il climatizzatore. Il controllo usa sempre 4 campioni fissi: l'intervallo tra un campione e l'altro viene calcolato automaticamente dividendo questo valore per 4 (esempio: 20 minuti → un controllo ogni 5 minuti; 12 minuti → un controllo ogni 3 minuti). Un valore più basso rende lo spegnimento più reattivo; un valore più alto protegge meglio da picchi di consumo temporanei (es. piano cottura). Minimo 5 minuti.",
+          "fv_turn_on_total_minutes": "Per quanti minuti consecutivi il surplus fotovoltaico deve restare sufficiente prima che il termostato accenda (o riaccenda) il climatizzatore. Senza questa attesa, spegnersi per calo FV riduce il consumo della casa e può far apparire il surplus improvvisamente sufficiente al ciclo successivo, causando una riaccensione quasi immediata dopo lo spegnimento. Un valore più alto protegge meglio da queste oscillazioni; un valore più basso rende l'accensione più reattiva a un vero miglioramento della produzione. Minimo 5 minuti.",
+          "fv_sensor_offline_shutoff_enabled": "Se attivo, un climatizzatore acceso dal fotovoltaico viene spento automaticamente quando il sensore di produzione FV smette di rispondere per troppo tempo — senza quel dato non possiamo più sapere se il sole c'è davvero. Si applica SOLO ai climatizzatori accesi dal fotovoltaico: un'accensione manuale non viene mai toccata. Di notte non ha alcun effetto, dato che l'accensione notturna non passa mai dal controllo fotovoltaico.",
+          "fv_sensor_offline_shutoff_min": "Dopo quanti minuti di sensore FV offline spegnere questo specifico climatizzatore. Una notifica di allerta parte comunque entro pochi minuti dal rilevamento, indipendentemente da questo valore.",
+          "fv_sensor_offline_notify_tts": "Avviso vocale (Google Home) quando il sensore FV va offline e quando questo climatizzatore viene spento di conseguenza.",
+          "fv_sensor_offline_notify_telegram": "Avviso Telegram quando il sensore FV va offline e quando questo climatizzatore viene spento di conseguenza.",
+          "fv_shutoff_threshold": "Il surplus deve restare sotto questo valore in tutti gli ultimi N campioni. Valore 0 = spegne quando FV < consumo. Esempio: 500W → spegne quando il surplus scende sotto 500W.",
+          "sunset_info": "Orario in cui il sole tramonta oggi nella tua posizione, calcolato automaticamente da Home Assistant. Si aggiorna ogni volta che apri queste impostazioni.",
+          "cutoff_info": "Orario calcolato automaticamente: tramonto meno le ore di anticipo configurate. Dopo quest'ora l'automazione non spegne più il clima acceso manualmente dall'utente e non accende più automaticamente dal FV. Si aggiorna ogni volta che apri queste impostazioni.",
+          "simple_sunset_anticipate_h": "Quante ore prima del tramonto l'automazione smette di intervenire. L'accensione automatica dal FV è attiva dalla fine della modalità notturna fino a questo orario — calcolato automaticamente ogni giorno in base alla stagione. Minimo 2 ore. Esempio: tramonto 19:40 con 2 ore → automazione attiva fino alle 17:40.",
+          "fv_shutoff_manual": "Se attivo, il termostato spegnerà il clima anche quando è stato acceso manualmente dall'utente e il FV non produce abbastanza.",
+          "fv_shutoff_manual_delay_min": "Quanti minuti aspettare, dopo aver rilevato FV insufficiente, prima di spegnere un climatizzatore acceso manualmente — chi lo accende manualmente probabilmente sente caldo e non gli interessa il fotovoltaico nel breve termine. Minimo 10 minuti, consigliati almeno 30. Non si applica alle accensioni fatte dal fotovoltaico stesso, che restano immediate.",
+          "simple_no_reon_manual_off": "Se attivo: quando spegni manualmente il climatizzatore (telecomando, app Gree, o qualsiasi altro mezzo diverso dal termostato), l'integrazione non lo riaccenderà automaticamente per il numero di ore impostato qui sotto — vale sia per accensioni normali per temperatura, sia per accensioni da surplus fotovoltaico, sia di giorno che di notte. Trascorse le ore configurate, torna a funzionare normalmente. Utile se vuoi tenerlo spento tu manualmente senza che il termostato lo riaccenda subito dopo.",
+          "simple_no_reon_manual_off_hours": "Per quante ore, dopo uno spegnimento manuale, l'integrazione deve astenersi dal riaccendere automaticamente il climatizzatore. Vale sia di giorno che di notte. Esempio: 2 ore → se spegni alle 15:00, il termostato non lo riaccenderà prima delle 17:00, anche se la temperatura supera la soglia o c'è surplus FV disponibile."
+        }
+      },
+      "simple_notifiche": {
+        "title": "Termostato — Notifiche",
+        "description": "Configura separatamente gli avvisi vocali su Google Home e i messaggi Telegram. Puoi attivare canali diversi per ogni evento.",
+        "data": {
+          "tts_media_players": "━━━ GOOGLE HOME ━━━",
+          "tts_engine_entity": "Motore TTS (lascia vuoto per automatico)",
+          "simple_notify_tts_ac_on": "▶ Accensione clima",
+          "simple_notify_tts_ac_off": "▶ Spegnimento clima",
+          "simple_notify_tts_temp_change": "▶ Cambio temperatura",
+          "simple_notify_tts_window_open": "▶ Finestra aperta",
+          "simple_notify_tts_window_close": "▶ Finestra chiusa",
+          "simple_notify_tts_door_open": "▶ Porta aperta",
+          "simple_notify_tts_door_close": "▶ Porta chiusa",
+          "simple_notify_tts_night_start": "▶ Inizio modalità notturna",
+          "simple_notify_tts_night_end": "▶ Fine modalità notturna",
+          "simple_quiet_night_tts": "▶ Silenzia Google Home durante la notte",
+          "notify_targets": "━━━ TELEGRAM ━━━",
+          "notify_chat_ids": "Chat ID Telegram (alternativa alle entità notify)",
+          "simple_notify_tel_ac_on": "▶ Accensione clima",
+          "simple_notify_tel_ac_off": "▶ Spegnimento clima",
+          "simple_notify_tel_temp_change": "▶ Cambio temperatura",
+          "simple_notify_tel_window_open": "▶ Finestra aperta",
+          "simple_notify_tel_window_close": "▶ Finestra chiusa",
+          "simple_notify_tel_door_open": "▶ Porta aperta",
+          "simple_notify_tel_door_close": "▶ Porta chiusa",
+          "simple_notify_tel_night_start": "▶ Inizio modalità notturna",
+          "simple_notify_tel_night_end": "▶ Fine modalità notturna",
+          "simple_quiet_night_notify": "▶ Silenzia Telegram durante la notte",
+          "simple_notify_tel_ac_off_fv": "▶ Spegnimento per FV insufficiente",
+          "fv_sensor_offline_notify_tts": "Avviso vocale per sensore FV offline",
+          "fv_sensor_offline_notify_telegram": "Avviso Telegram per sensore FV offline",
+          "simple_notify_tts_manual_on": "Google Home — Accensione manuale",
+          "simple_notify_tel_manual_on": "Telegram — Accensione manuale",
+          "simple_notify_tts_manual_off": "Google Home — Spegnimento manuale",
+          "simple_notify_tel_manual_off": "Telegram — Spegnimento manuale"
+        },
+        "data_description": {
+          "tts_media_players": "Seleziona uno o più altoparlanti Google Home o Nest su cui il termostato parlerà. Lascia vuoto per non usare la voce.",
+          "tts_engine_entity": "Motore TTS da usare. Lascia vuoto per il predefinito di Home Assistant.",
+          "simple_notify_tts_ac_on": "Google Home annuncia quando il climatizzatore si accende automaticamente.",
+          "simple_notify_tts_ac_off": "Google Home annuncia quando il climatizzatore si spegne automaticamente per aver raggiunto la temperatura target.",
+          "simple_notify_tts_temp_change": "Google Home annuncia ogni cambio di temperatura rilevato nella stanza.",
+          "simple_notify_tts_window_open": "Google Home avvisa quando la finestra si apre (il clima si spegnerà dopo 5 minuti se rimane aperta).",
+          "simple_notify_tts_window_close": "Google Home avvisa quando la finestra viene richiusa e il clima viene riacceso.",
+          "simple_notify_tts_door_open": "Google Home avvisa quando la porta si apre. Solo informativo, non agisce sul clima.",
+          "simple_notify_tts_door_close": "Google Home avvisa quando la porta si chiude. Solo informativo.",
+          "simple_notify_tts_night_start": "Google Home annuncia l'inizio della modalità notturna con la temperatura target notturna.",
+          "simple_notify_tts_night_end": "Google Home annuncia la fine della modalità notturna.",
+          "simple_quiet_night_tts": "Se attivato: Google Home non parla durante la fascia notturna per non svegliarti. Gli avvisi di finestra aperta restano sempre attivi.",
+          "notify_targets": "Entità notify di Home Assistant per inviare messaggi Telegram. Esempio: notify.telegram_mimmo.",
+          "notify_chat_ids": "Alternativa alle entità notify: inserisci i Chat ID Telegram separati da virgola.",
+          "simple_notify_tel_ac_on": "Telegram avvisa quando il climatizzatore si accende automaticamente.",
+          "simple_notify_tel_ac_off": "Telegram avvisa quando il climatizzatore si spegne per aver raggiunto la temperatura target.",
+          "simple_notify_tel_temp_change": "Telegram avvisa ad ogni cambio di temperatura rilevato. Può essere frequente.",
+          "simple_notify_tel_window_open": "Telegram avvisa quando la finestra si apre.",
+          "simple_notify_tel_window_close": "Telegram avvisa quando la finestra viene richiusa.",
+          "simple_notify_tel_door_open": "Telegram avvisa quando la porta si apre. Solo informativo.",
+          "simple_notify_tel_door_close": "Telegram avvisa quando la porta si chiude. Solo informativo.",
+          "simple_notify_tel_night_start": "Telegram avvisa all'inizio della modalità notturna.",
+          "simple_notify_tel_night_end": "Telegram avvisa alla fine della modalità notturna.",
+          "simple_quiet_night_notify": "Se attivato: Telegram non invia messaggi automatici durante la fascia notturna.",
+          "simple_notify_tel_ac_off_fv": "Telegram avvisa quando il clima si spegne perché il fotovoltaico non produce abbastanza. Il messaggio indica che si tratta di uno spegnimento automatico FV, non per temperatura raggiunta.",
+          "fv_sensor_offline_notify_tts": "Se attivo, avvisa su Google Home quando il sensore di produzione fotovoltaica va offline e quando un climatizzatore viene spento di conseguenza.",
+          "fv_sensor_offline_notify_telegram": "Se attivo, avvisa su Telegram quando il sensore di produzione fotovoltaica va offline e quando un climatizzatore viene spento di conseguenza.",
+          "simple_notify_tts_manual_on": "Annuncia quando viene rilevata un'accensione manuale (telecomando, app del produttore — non dalla card).",
+          "simple_notify_tel_manual_on": "Invia un messaggio quando viene rilevata un'accensione manuale.",
+          "simple_notify_tts_manual_off": "Annuncia quando viene rilevato uno spegnimento manuale (telecomando, app del produttore — non dalla card).",
+          "simple_notify_tel_manual_off": "Invia un messaggio quando viene rilevato uno spegnimento manuale."
+        }
+      },
+      "protezione_potenza": {
+        "title": "Protezione potenza — Evita distacco contatore",
+        "description": "Configura la protezione automatica contro il distacco del contatore. Se il consumo supera la soglia impostata, il climatizzatore viene spento automaticamente e riacceso quando i consumi calano.",
+        "data": {
+          "power_limit_enabled": "▶ Attiva protezione potenza",
+          "power_limit_sensor": "Sensore consumo da monitorare (W)",
+          "power_limit_mode": "Modalità gestione",
+          "power_limit_max_w": "Soglia massima di consumo prima dello spegnimento (W)",
+          "power_limit_hysteresis_w": "Riduzione consumo necessaria per riaccendere (W)",
+          "power_limit_restore_min": "Minuti di consumo basso prima di riaccendere",
+          "power_limit_notify_tts": "▶ Avviso vocale Google Home",
+          "power_limit_notify_telegram": "▶ Avviso Telegram"
+        },
+        "data_description": {
+          "power_limit_enabled": "Se attivato: il termostato monitora il consumo e spegne automaticamente il climatizzatore se supera la soglia per almeno 30 secondi (anti-picco). Lo riaccende quando i consumi calano abbastanza.",
+          "power_limit_sensor": "Il sensore che misura il consumo elettrico del circuito da proteggere. Può essere il consumo totale della casa o di un singolo circuito (es. meter della sala da pranzo). Esempio: sensor.consumo_sala.",
+          "power_limit_mode": "Unico clima: gestisce solo questo climatizzatore indipendentemente dagli altri. Più clima: coordina lo spegnimento e la riaccensione in cascata con gli altri termostati che hanno la stessa protezione attiva, usando la priorità già configurata.",
+          "power_limit_max_w": "Se il consumo supera questo valore per almeno 30 secondi, il climatizzatore viene spento. I 30 secondi evitano spegnimenti per picchi momentanei (es. avvio lavatrice, forno a induzione). Esempio: 3500W → spegne se stai assorbendo più di 3500W.",
+          "power_limit_hysteresis_w": "Di quanti Watt deve scendere il consumo rispetto alla soglia massima prima che il clima possa riaccendersi. Esempio: soglia 3500W, isteresi 800W → riaccende solo quando il consumo scende sotto 2700W. Evita cicli rapidi di accensione/spegnimento.",
+          "power_limit_restore_min": "Quanti minuti il consumo deve restare sotto la soglia di riaccensione prima che il clima si riaccenda. Esempio: 5 minuti → se i consumi calano ma risalgono prima di 5 minuti, il clima non riaccende.",
+          "power_limit_notify_tts": "Se attivato: Google Home annuncia quando il clima viene spento o riacceso per protezione potenza.",
+          "power_limit_notify_telegram": "Se attivato: Telegram avvisa quando il clima viene spento o riacceso per protezione potenza."
+        }
+      },
+      "protezione_potenza_completo": {
+        "title": "Protezione potenza — Evita distacco contatore",
+        "description": "Configura la protezione automatica contro il distacco del contatore. Se il consumo supera la soglia impostata, il climatizzatore viene spento automaticamente e riacceso quando i consumi calano.",
+        "data": {
+          "power_limit_enabled": "▶ Attiva protezione potenza",
+          "power_limit_sensor": "Sensore consumo da monitorare (W)",
+          "power_limit_mode": "Modalità gestione",
+          "power_limit_max_w": "Soglia massima di consumo prima dello spegnimento (W)",
+          "power_limit_hysteresis_w": "Riduzione consumo necessaria per riaccendere (W)",
+          "power_limit_restore_min": "Minuti di consumo basso prima di riaccendere",
+          "power_limit_notify_tts": "▶ Avviso vocale Google Home",
+          "power_limit_notify_telegram": "▶ Avviso Telegram",
+          "power_limit_msg_off": "Messaggio spegnimento (template)",
+          "power_limit_msg_on": "Messaggio riaccensione (template)"
+        },
+        "data_description": {
+          "power_limit_enabled": "Se attivato: il termostato monitora il consumo e spegne automaticamente il climatizzatore se supera la soglia per almeno 30 secondi (anti-picco). Lo riaccende quando i consumi calano abbastanza.",
+          "power_limit_sensor": "Il sensore che misura il consumo elettrico del circuito da proteggere. Può essere il consumo totale della casa o di un singolo circuito (es. meter della sala da pranzo). Esempio: sensor.consumo_sala.",
+          "power_limit_mode": "Unico clima: gestisce solo questo climatizzatore indipendentemente dagli altri. Più clima: coordina lo spegnimento e la riaccensione in cascata con gli altri termostati che hanno la stessa protezione attiva, usando la priorità già configurata.",
+          "power_limit_max_w": "Se il consumo supera questo valore per almeno 30 secondi, il climatizzatore viene spento. I 30 secondi evitano spegnimenti per picchi momentanei (es. avvio lavatrice, forno a induzione). Esempio: 3500W → spegne se stai assorbendo più di 3500W.",
+          "power_limit_hysteresis_w": "Di quanti Watt deve scendere il consumo rispetto alla soglia massima prima che il clima possa riaccendersi. Esempio: soglia 3500W, isteresi 800W → riaccende solo quando il consumo scende sotto 2700W. Evita cicli rapidi di accensione/spegnimento.",
+          "power_limit_restore_min": "Quanti minuti il consumo deve restare sotto la soglia di riaccensione prima che il clima si riaccenda. Esempio: 5 minuti → se i consumi calano ma risalgono prima di 5 minuti, il clima non riaccende.",
+          "power_limit_notify_tts": "Se attivato: Google Home annuncia quando il clima viene spento o riacceso per protezione potenza.",
+          "power_limit_notify_telegram": "Se attivato: Telegram avvisa quando il clima viene spento o riacceso per protezione potenza.",
+          "power_limit_msg_off": "Messaggio inviato quando il clima viene spento per eccesso di consumo. Variabili: {{ name }} = nome termostato, {{ consumo }} = consumo attuale in W.",
+          "power_limit_msg_on": "Messaggio inviato quando il clima viene riacceso dopo il calo dei consumi. Variabili: {{ name }} = nome termostato."
+        }
+      },
+      "emergenza_simple": {
+        "title": "Emergenza caldo",
+        "description": "Configura il comportamento dello switch 'Emergenza caldo'. Quando attivato manualmente, il termostato ignora completamente il fotovoltaico e accende il clima solo in base alla temperatura, come se fosse in modalità semplice. Si disattiva automaticamente 5 minuti prima della modalità notturna o quando la temperatura rientra.",
+        "data": {
+          "emergency_heat_active": "▶ Attiva emergenza caldo adesso",
+          "emergency_heat_threshold": "Temperatura sopra il target per accendere in emergenza (°C)",
+          "emergency_heat_end_threshold": "Temperatura sopra il target per considerare l'emergenza rientrata (°C)",
+          "emergency_notify_tts": "▶ Avviso vocale Google Home",
+          "emergency_notify_telegram": "▶ Avviso Telegram"
+        },
+        "data_description": {
+          "emergency_heat_active": "Attiva o disattiva lo switch emergenza caldo direttamente da qui. Quando attivo il termostato ignora completamente il fotovoltaico e accende il clima solo in base alla temperatura. Si disattiva automaticamente 5 minuti prima della modalità notturna o quando la temperatura rientra nella soglia configurata.",
+          "emergency_heat_threshold": "Di quanti gradi la temperatura deve superare il target per accendere il clima in modalità emergenza. Esempio: 1.5°C con target 25°C → accende da 26.5°C ignorando il fotovoltaico.",
+          "emergency_heat_end_threshold": "Quando la temperatura scende entro questo margine dal target, l'emergenza si considera rientrata e lo switch si disattiva automaticamente. Esempio: 0.7°C con target 25°C → emergenza finisce quando scende sotto 25.7°C.",
+          "emergency_notify_tts": "Se attivato: Google Home annuncia quando inizia e finisce l'emergenza caldo.",
+          "emergency_notify_telegram": "Se attivato: Telegram avvisa quando inizia e finisce l'emergenza caldo."
+        }
+      },
+      "emergenza_completo": {
+        "title": "Emergenza caldo",
+        "description": "Configura il comportamento dello switch 'Emergenza caldo'. Quando attivato manualmente, il termostato ignora completamente il fotovoltaico e accende il clima solo in base alla temperatura, come se fosse in modalità semplice. Si disattiva automaticamente 5 minuti prima della modalità notturna o quando la temperatura rientra.",
+        "data": {
+          "emergency_heat_active": "▶ Attiva emergenza caldo adesso",
+          "emergency_heat_threshold": "Temperatura sopra il target per accendere in emergenza (°C)",
+          "emergency_heat_end_threshold": "Temperatura sopra il target per considerare l'emergenza rientrata (°C)",
+          "emergency_notify_tts": "▶ Avviso vocale Google Home",
+          "emergency_notify_telegram": "▶ Avviso Telegram",
+          "emergency_msg_on": "Messaggio inizio emergenza (template)",
+          "emergency_msg_off": "Messaggio fine emergenza (template)"
+        },
+        "data_description": {
+          "emergency_heat_active": "Attiva o disattiva lo switch emergenza caldo direttamente da qui. Quando attivo il termostato ignora completamente il fotovoltaico e accende il clima solo in base alla temperatura. Si disattiva automaticamente 5 minuti prima della modalità notturna o quando la temperatura rientra nella soglia configurata.",
+          "emergency_heat_threshold": "Di quanti gradi la temperatura deve superare il target per accendere il clima in modalità emergenza. Esempio: 1.5°C con target 25°C → accende da 26.5°C ignorando il fotovoltaico.",
+          "emergency_heat_end_threshold": "Quando la temperatura scende entro questo margine dal target, l'emergenza si considera rientrata e lo switch si disattiva automaticamente. Esempio: 0.7°C con target 25°C → emergenza finisce quando scende sotto 25.7°C.",
+          "emergency_notify_tts": "Se attivato: Google Home annuncia quando inizia e finisce l'emergenza caldo.",
+          "emergency_notify_telegram": "Se attivato: Telegram avvisa quando inizia e finisce l'emergenza caldo.",
+          "emergency_msg_on": "Messaggio inviato quando inizia l'emergenza caldo. Variabili: {{ name }} = nome termostato, {{ temp }} = temperatura attuale, {{ target }} = temperatura target.",
+          "emergency_msg_off": "Messaggio inviato quando l'emergenza caldo termina. Stesse variabili disponibili."
+        }
+      },
+      "cambia_modalita": {
+        "title": "Modifica modalità di configurazione",
+        "description": "Puoi cambiare la modalità di configurazione. Attenzione: cambiando modalità i parametri della vecchia modalità vengono mantenuti ma potresti dover riconfigurare alcune impostazioni.",
+        "data": {
+          "config_mode": "Modalità di configurazione"
+        },
+        "data_description": {
+          "config_mode": "🟢 SEMPLIFICATO — Pochi campi essenziali, logica automatica.\n🔵 SEMPLIFICATO CON FOTOVOLTAICO — Come il semplificato + gestione FV.\n⚙️ COMPLETO — Tutti i parametri avanzati."
+        }
+      },
+      "inverno": {
+        "title": "❄️ Inverno",
+        "description": "Impostazioni usate quando la modalità stagionale è Inverno o Auto.",
+        "data": {
+          "winter_target_day": "Target giorno inverno",
+          "winter_target_night": "Target notte inverno",
+          "winter_turn_on_offset": "Scarto accensione inverno",
+          "winter_shutoff_margin": "Margine spegnimento inverno",
+          "winter_soc_min": "Soglia batteria minima FV — inverno",
+          "winter_floor_sensor": "Sensore anello riscaldamento a pavimento",
+          "emergency_winter_heat_threshold": "Emergenza accendi riscaldamento — soglia",
+          "emergency_winter_heat_end_threshold": "Emergenza accendi riscaldamento — soglia fine"
+        },
+        "data_description": {
+          "winter_target_day": "Temperatura target di giorno quando la stagione è Inverno o Auto (in Auto, mentre è attivo il riscaldamento).",
+          "winter_target_night": "Temperatura target di notte quando la stagione è Inverno o Auto.",
+          "winter_turn_on_offset": "Di quanti gradi sotto il target la temperatura deve scendere prima di poter accendere — usato sia con che senza sensore anello pavimento.",
+          "winter_shutoff_margin": "Di quanti gradi sopra il target la temperatura deve salire prima di spegnere.",
+          "winter_soc_min": "Sotto questa percentuale di batteria, il riscaldamento non si accende da fotovoltaico — più alta di quella estiva, dato che in inverno la batteria è preziosa.",
+          "winter_floor_sensor": "Opzionale — se configurato, l'assistenza da fotovoltaico non accende il condizionatore se l'anello del pavimento sta già scaldando questa stanza, evitando lo spreco. Lascia vuoto se non hai questo impianto.",
+          "emergency_winter_heat_threshold": "Di quanti gradi sotto il target la temperatura deve scendere prima che l'emergenza riscaldamento intervenga, ignorando il fotovoltaico.",
+          "emergency_winter_heat_end_threshold": "Di quanti gradi sopra la soglia di accensione la temperatura deve risalire prima che l'emergenza si disattivi automaticamente."
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Questo climatizzatore è già gestito da un'altra istanza del Termostato Intelligente FV."
+    }
+  },
+  "options": {
+    "step": {
+      "sensori": {
+        "title": "Entità e sensori",
+        "description": "Modifica il climatizzatore controllato e i sensori collegati.",
+        "data": {
+          "name": "Nome del termostato",
+          "temp_sensor": "Sensore temperatura stanza",
+          "window_sensor": "Sensore finestra",
+          "presence_sensor": "Sensore presenza (opzionale)",
+          "door_sensor": "Sensore porta (opzionale)",
+          "window_detection_enabled": "Il rilevamento finestra influisce sul climatizzatore"
+        },
+        "data_description": {
+          "name": "Il nome con cui questo termostato appare in Home Assistant. Esempio: 'Camera da letto'.",
+          "temp_sensor": "Sonda temperatura della stanza, lontana dal climatizzatore.",
+          "window_sensor": "Sensore binario 'on' quando la finestra è aperta.",
+          "presence_sensor": "Opzionale. Abilita il boost ventola per presenza continua. Lascia vuoto per disattivare.",
+          "door_sensor": "Opzionale. Avvisa quando la porta si apre o chiude. Non agisce sul clima. Lascia vuoto per disattivare.",
+          "window_detection_enabled": "Se disattivato, la finestra non ha alcun effetto sul climatizzatore — né spegnimento quando si apre, né avviso quando accendi manualmente con la finestra già aperta. Utile se il sensore ha comportamenti poco affidabili in certe condizioni (es. non si aggiorna correttamente durante usi prolungati della cucina)."
+        }
+      },
+      "profilo": {
+        "title": "Profilo di regolazione",
+        "description": "Scegli come il termostato deve comportarsi.",
+        "data": {
+          "profile": "Profilo di regolazione"
+        },
+        "data_description": {
+          "profile": "🔵 BILANCIATO — Accende a +1.5°C dal target, ventola alta da +2.0°C.\n🔴 AGGRESSIVO — Accende a +1.2°C, ventola alta da +1.6°C. Per stanze grandi o molto esposte.\n🟢 DELICATO — Accende a +1.8°C, ventola alta da +2.4°C. Silenzioso, ideale per dormire.\n⚙️ PERSONALIZZATO — Imposta manualmente ogni soglia nel passo successivo."
+        }
+      },
+      "soglie_termiche": {
+        "title": "Soglie termiche personalizzate",
+        "description": "Visibili solo con profilo Personalizzato.",
+        "data": {
+          "target_temp_default": "Temperatura target iniziale (°C)",
+          "extreme_offset": "Soglia caldo estremo sopra target (°C)",
+          "hot_offset": "Soglia caldo forte sopra target (°C)",
+          "range_offset": "Soglia caldo lieve sopra target (°C)",
+          "below_offset": "Margine sotto target per rallentare (°C)",
+          "turn_on_offset": "Scarto minimo per accendere da FV (°C)",
+          "temp_delta": "Delta setpoint fasce caldo/forte (°C)",
+          "extreme_delta": "Delta setpoint fascia caldo estremo (°C)",
+          "manual_shutoff_timer_min": "Timer spegnimento dopo accensione manuale (minuti)",
+          "manual_shutoff_timer_enabled": "Attivare lo spegnimento automatico se acceso manualmente?"
+        },
+        "data_description": {
+          "target_temp_default": "Temperatura desiderata nella stanza. Esempio: 25°C.",
+          "extreme_offset": "Sopra target + questo: ventola al massimo. Esempio: 2.0°C → caldo estremo sopra 27°C.",
+          "hot_offset": "Sopra target + questo: ventola media. Esempio: 1.5°C → caldo forte tra 26.5 e 27°C.",
+          "range_offset": "Sopra target + questo: ventola bassa. Esempio: 0.2°C → caldo lieve tra 25.2 e 26.5°C.",
+          "below_offset": "Sotto target - questo: il clima rallenta. Esempio: 0.1°C → rallenta sotto 24.9°C.",
+          "turn_on_offset": "Accende da FV solo se stanza > target + questo. Esempio: 1.5°C → solo sopra 26.5°C.",
+          "temp_delta": "Di quanto si abbassa il setpoint nelle fasce normali. Esempio: 1.0°C.",
+          "extreme_delta": "Di quanto si abbassa il setpoint in caldo estremo. Esempio: 2.0°C.",
+          "manual_shutoff_timer_min": "Se attivato dalla card, dopo un'accensione manuale il climatizzatore si spegne automaticamente dopo questi minuti, indipendentemente dal master switch — utile per un uso completamente manuale (es. uno scaldotto). Imposta 0 per non offrire mai questa funzione nella card.",
+          "manual_shutoff_timer_enabled": "Se attivo, il timer di spegnimento (impostato qui sotto) parte automaticamente ad ogni accensione manuale, senza bisogno di attivarlo ogni volta dalla card — puoi comunque attivarlo/disattivarlo in qualsiasi momento dalla card. Vale sempre, anche se il master switch dell'automazione è disattivato."
+        }
+      },
+      "energia": {
+        "title": "Fotovoltaico — Accensione e spegnimento automatico",
+        "description": "Configura l'uso del fotovoltaico. Lascia i sensori vuoti per disabilitare.",
+        "data": {
+          "fv_sensor": "Sensore produzione fotovoltaica (W)",
+          "consumption_sensor": "Sensore consumo rete (W)",
+          "battery_sensor": "Sensore stato di carica batteria (%)",
+          "fv_margin_w": "Surplus minimo per accendere (W)",
+          "soc_min": "Carica batteria minima per accendere (%)",
+          "fv_start_time": "Inizio fascia di accensione automatica",
+          "fv_end_time": "Fine fascia di accensione automatica",
+          "fv_priority": "Priorità accensione (numero più basso = prima)",
+          "fv_stagger_minutes": "Distanza minima tra accensioni/spegnimenti (min)",
+          "fv_shutoff_enabled": "▶ Spegnimento automatico quando il FV cala",
+          "fv_shutoff_delay_min": "Campioni insufficienti consecutivi prima di spegnere",
+          "fv_shutoff_threshold": "Soglia surplus FV per lo spegnimento (W)",
+          "fv_shutoff_extra_hours": "Ore extra dopo fine fascia per spegnimento",
+          "fv_shutoff_manual": "Spegni anche se acceso manualmente",
+          "simple_no_reon_manual_off": "Non accendere se spento manualmente",
+          "simple_no_reon_manual_off_hours": "Ore di blocco riaccensione dopo spegnimento manuale",
+          "fv_sensor_offline_shutoff_enabled": "Spegni se sensore FV offline",
+          "fv_sensor_offline_shutoff_min": "Minuti prima di spegnere se il sensore FV è offline",
+          "fv_sensor_offline_notify_tts": "Avviso vocale per sensore FV offline",
+          "fv_sensor_offline_notify_telegram": "Avviso Telegram per sensore FV offline"
+        },
+        "data_description": {
+          "fv_sensor": "Watt prodotti dai pannelli in tempo reale.",
+          "consumption_sensor": "Consumo istantaneo dalla rete.",
+          "battery_sensor": "Percentuale di carica della batteria.",
+          "fv_margin_w": "Surplus richiesto oltre il consumo per accendere. Esempio: 1200W.",
+          "soc_min": "Carica minima della batteria per accendere. Esempio: 70%.",
+          "fv_start_time": "Non accende automaticamente prima di quest'ora.",
+          "fv_end_time": "Non accende automaticamente dopo quest'ora.",
+          "fv_priority": "Con più termostati, numero più basso = accende prima e spegne per ultimo.",
+          "fv_stagger_minutes": "Pausa tra accensioni successive per evitare picchi.",
+          "fv_shutoff_enabled": "Se attivato: spegne quando il surplus resta sotto soglia per N campioni consecutivi.",
+          "fv_shutoff_delay_min": "Quanti campioni consecutivi (uno per ogni ciclo di aggiornamento generale) di surplus sotto soglia devono accumularsi prima di spegnere. Esempio: 5 campioni con ciclo di aggiornamento di 5 minuti = 25 minuti confermati. La finestra è scorrevole: un singolo valore alto non azzera tutto, ma fa slittare il buffer.",
+          "fv_shutoff_threshold": "Surplus minimo (produzione - consumo) richiesto. Sotto questo valore per N campioni → spegne. Valore 0 = spegne quando FV non copre il consumo.",
+          "fv_shutoff_extra_hours": "Ore extra dopo fine fascia in cui può ancora spegnere.",
+          "fv_shutoff_manual": "Se attivo, lo spegnimento per calo FV si applica anche a un climatizzatore acceso manualmente, non solo a quelli accesi automaticamente dal fotovoltaico.",
+          "simple_no_reon_manual_off": "Se attivo, dopo uno spegnimento manuale il termostato non riaccende automaticamente il climatizzatore per il numero di ore configurato qui sotto.",
+          "simple_no_reon_manual_off_hours": "Per quante ore, dopo uno spegnimento manuale, il termostato evita di riaccendere automaticamente il climatizzatore.",
+          "fv_sensor_offline_shutoff_enabled": "Se attivo, un climatizzatore acceso dal fotovoltaico viene spento automaticamente quando il sensore di produzione FV smette di rispondere per troppo tempo — senza quel dato non possiamo più sapere se il sole c'è davvero. Si applica SOLO ai climatizzatori accesi dal fotovoltaico: un'accensione manuale non viene mai toccata. Di notte non ha alcun effetto, dato che l'accensione notturna non passa mai dal controllo fotovoltaico.",
+          "fv_sensor_offline_shutoff_min": "Dopo quanti minuti di sensore FV offline spegnere questo specifico climatizzatore. Una notifica di allerta parte comunque entro pochi minuti dal rilevamento, indipendentemente da questo valore.",
+          "fv_sensor_offline_notify_tts": "Avviso vocale (Google Home) quando il sensore FV va offline e quando questo climatizzatore viene spento di conseguenza.",
+          "fv_sensor_offline_notify_telegram": "Avviso Telegram quando il sensore FV va offline e quando questo climatizzatore viene spento di conseguenza."
+        }
+      },
+      "modalita_notturna": {
+        "title": "Modalità notturna",
+        "description": "Configura il comportamento notturno del termostato.",
+        "data": {
+          "night_start_time": "Inizio modalità notturna",
+          "night_end_time": "Fine modalità notturna",
+          "night_offset": "Gradi extra al target di notte (°C)",
+          "night_ac_enabled": "▶ Accensione automatica notturna",
+          "night_turn_on_offset": "Gradi sopra target notte per accendere (°C)",
+          "night_shutoff_enabled": "▶ Spegnimento automatico quando si raggiunge il target",
+          "night_shutoff_delta": "Tolleranza sopra target notte (°C)",
+          "night_shutoff_min": "Minuti consecutivi in temperatura prima di spegnere",
+          "night_end_shutoff_enabled": "▶ Spegni alla fine della modalità notturna (sempre)",
+          "night_end_shutoff_auto_only": "▶ Spegni a fine notte solo se acceso automaticamente",
+          "presence_boost_enabled": "▶ Boost ventola se c'è presenza e fa ancora caldo",
+          "presence_boost_minutes": "Minuti di presenza continua prima del boost",
+          "presence_boost_offset": "Gradi sopra target per il boost (°C)",
+          "window_delay_minutes": "Minuti con finestra aperta prima di spegnere",
+          "update_interval_minutes": "Frequenza di controllo (minuti)",
+          "calibration_max_offset": "Correzione massima sonda interna clima (°C)",
+          "min_below_internal": "Margine minimo setpoint sotto sonda interna (°C)"
+        },
+        "data_description": {
+          "night_start_time": "Inizio fascia notturna. Può attraversare la mezzanotte. Esempio: 23:00.",
+          "night_end_time": "Fine fascia notturna. Esempio: 07:00.",
+          "night_offset": "Gradi aggiunti al target di notte. Esempio: target 25°C + 1°C = target notte 26°C.",
+          "night_ac_enabled": "Se attivato: accende il clima di notte se la stanza supera target notte + soglia.",
+          "night_turn_on_offset": "Soglia sopra il target notte per l'accensione. Esempio: target 26°C + 1.5°C → accende sopra 27.5°C.",
+          "night_shutoff_enabled": "Se attivato: spegne il clima quando la stanza rimane in temperatura per i minuti configurati.",
+          "night_shutoff_delta": "Tolleranza sopra il target notte. Esempio: target 26°C, delta 0.3°C → in temperatura quando ≤ 26.3°C.",
+          "night_shutoff_min": "Minuti consecutivi in temperatura prima di spegnere. Se la temp sale, il conteggio riparte.",
+          "night_end_shutoff_enabled": "Se attivato: alla fine della modalità notturna (es. alle 07:00) il clima viene spento SEMPRE, qualunque sia il motivo per cui era acceso.",
+          "night_end_shutoff_auto_only": "Se attivato: alla fine della notte spegne SOLO SE il clima era stato acceso automaticamente dalla modalità notturna. Se lo avevi acceso tu a mano, non fa nulla.",
+          "presence_boost_enabled": "Se attivato: alza la ventola a media quando c'è presenza continua e la stanza è ancora calda.",
+          "presence_boost_minutes": "Minuti di presenza continua prima del boost. Esempio: 10 minuti.",
+          "presence_boost_offset": "Boost solo se stanza > target + questo. Esempio: 1°C → boost solo sopra 26°C.",
+          "window_delay_minutes": "Minuti prima di spegnere per finestra aperta. Esempio: 5 minuti.",
+          "update_interval_minutes": "Ogni quanti minuti il termostato controlla. Esempio: 5 minuti.",
+          "calibration_max_offset": "Correzione massima per differenza tra sonda stanza e sonda interna. Esempio: 3°C.",
+          "min_below_internal": "Il setpoint resta almeno questo valore sotto la sonda interna. Esempio: 1°C."
+        }
+      },
+      "notifiche": {
+        "title": "Notifiche e fascia di silenzio",
+        "description": "Configura avvisi vocali e Telegram, e gli orari in cui silenziare gli avvisi automatici.",
+        "data": {
+          "tts_media_players": "Dispositivi Google Home / media player",
+          "tts_engine_entity": "Motore TTS (vuoto = automatico)",
+          "tts_message_open": "Messaggio vocale finestra aperta (template)",
+          "notify_targets": "Entità notify per Telegram",
+          "notify_chat_ids": "Chat ID Telegram",
+          "notify_temp_change_enabled": "▶ Notifica Telegram ad ogni cambio setpoint",
+          "notify_temp_change_limit_enabled": "▶ Limita le notifiche cambio setpoint",
+          "notify_temp_change_limit_min": "Intervallo minimo tra notifiche cambio setpoint (min)",
+          "notify_temp_change_message": "Messaggio cambio setpoint (template)",
+          "notify_power_tts": "▶ Voce Google per accensione/spegnimento automatico FV e notte",
+          "notify_power_notify": "▶ Telegram per accensione/spegnimento automatico FV e notte",
+          "notify_night_end_tts": "▶ Voce Google allo spegnimento di fine modalità notturna",
+          "notify_night_end_notify": "▶ Telegram allo spegnimento di fine modalità notturna",
+          "door_alert_enabled": "▶ Avviso apertura e chiusura porta",
+          "door_alert_tts": "▶ Avviso porta via voce Google",
+          "door_alert_notify": "▶ Avviso porta via Telegram",
+          "door_alert_message": "Messaggio avviso porta (template)",
+          "quiet_enabled": "▶ Attiva fascia di silenzio",
+          "quiet_start_time": "Inizio fascia di silenzio",
+          "quiet_end_time": "Fine fascia di silenzio",
+          "quiet_tts": "▶ Silenzia voce Google nella fascia",
+          "quiet_notify": "▶ Silenzia Telegram nella fascia"
+        },
+        "data_description": {
+          "tts_media_players": "Altoparlanti Google Home o media_player per i messaggi vocali.",
+          "tts_engine_entity": "Motore TTS. Lascia vuoto per il predefinito.",
+          "tts_message_open": "Messaggio quando la finestra si apre. Variabili: {{ delay }}, {{ name }}, {{ target }}.",
+          "notify_targets": "Entità notify di HA per Telegram. Esempio: notify.telegram_mimmo.",
+          "notify_chat_ids": "Chat ID Telegram separati da virgola. Solo se non hai entità notify.",
+          "notify_temp_change_enabled": "Se attivato: Telegram ad ogni cambio setpoint. Può essere frequente.",
+          "notify_temp_change_limit_enabled": "Se attivato: le notifiche Telegram di cambio setpoint vengono inviate al massimo una volta ogni X minuti. Utile per ridurre i messaggi quando il termostato aggiusta frequentemente il setpoint. La fascia di silenzio ha sempre la precedenza e blocca le notifiche indipendentemente da questa impostazione.",
+          "notify_temp_change_limit_min": "Ogni quanti minuti al massimo può arrivare una notifica di cambio setpoint. Esempio: 30 minuti → anche se il setpoint cambia ogni 5 minuti, la notifica arriva al massimo ogni 30 minuti.",
+          "notify_temp_change_message": "Variabili: {{ name }}, {{ old_temp }}, {{ new_temp }}, {{ fan_mode }}, {{ room_temp }}, {{ target }}.",
+          "notify_power_tts": "Se attivato: Google Home parla per accensioni/spegnimenti automatici da FV e modalità notturna.",
+          "notify_power_notify": "Se attivato: Telegram per accensioni/spegnimenti automatici da FV e modalità notturna.",
+          "notify_night_end_tts": "Se attivato: Google Home annuncia quando il clima si spegne alla fine della modalità notturna. Canale separato dagli altri avvisi.",
+          "notify_night_end_notify": "Se attivato: Telegram avvisa quando il clima si spegne alla fine della modalità notturna. Canale separato. Attivo di default.",
+          "door_alert_enabled": "Se attivato: avvisa sia all'apertura che alla chiusura. Solo informativo, non agisce sul clima.",
+          "door_alert_tts": "Avviso porta via Google Home.",
+          "door_alert_notify": "Avviso porta via Telegram.",
+          "door_alert_message": "Messaggio avviso porta. Variabile: {{ name }}.",
+          "quiet_enabled": "Se attivato: nella fascia configurata silenzia gli avvisi automatici.",
+          "quiet_start_time": "Da quest'ora inizia il periodo di silenzio. La fascia può attraversare la mezzanotte. Esempio: 23:00.",
+          "quiet_end_time": "A quest'ora finisce il periodo di silenzio e gli avvisi tornano normali. Esempio: 07:00.",
+          "quiet_tts": "Se attivato: Google Home non parla nella fascia di silenzio.",
+          "quiet_notify": "Se attivato: Telegram sospende i messaggi nella fascia di silenzio."
+        }
+      },
+      "simple_entita": {
+        "title": "Termostato — Dispositivi",
+        "description": "Seleziona il climatizzatore e i sensori da collegare. Solo il climatizzatore è obbligatorio.",
+        "data": {
+          "name": "Nome del termostato",
+          "climate_entity": "Climatizzatore da pilotare",
+          "temp_sensor": "Sensore temperatura stanza (opzionale)",
+          "simple_external_sensor_stale_min": "Minuti prima di considerare bloccata la sonda esterna",
+          "window_sensor": "Sensore finestra (opzionale)",
+          "door_sensor": "Sensore porta (opzionale)",
+          "window_detection_enabled": "Il rilevamento finestra influisce sul climatizzatore"
+        },
+        "data_description": {
+          "name": "Il nome con cui questo termostato apparirà in Home Assistant. Esempio: 'Camera da letto'.",
+          "climate_entity": "Il climatizzatore fisico da controllare. Esempio: climate.condizionatore_camera.",
+          "temp_sensor": "Sensore di temperatura esterna alla stanza (es. sonda Zigbee). Se lasci vuoto, il termostato usa la sonda interna del climatizzatore. ⚠️ La sonda interna del clima legge solo valori interi (es. 25°C, non 25.3°C) quindi le soglie di accensione e spegnimento si adattano automaticamente. Esempio con sonda esterna: sensor.temperatura_camera_letto. Lascia vuoto per usare la sonda del clima.",
+          "simple_external_sensor_stale_min": "Se la sonda esterna (es. un sensore MQTT che dipende da un server remoto) smette di aggiornarsi per più di questi minuti, il termostato passa automaticamente alla sonda interna del climatizzatore, per evitare di regolare la temperatura basandosi su un dato vecchio. Torna da sola alla sonda esterna non appena questa riprende ad aggiornarsi. Default 45 minuti.",
+          "window_sensor": "Sensore binario che diventa 'on' quando la finestra è aperta. Se configurato: il termostato avvisa all'apertura e dopo 5 minuti spegne il clima, poi lo riaccende automaticamente quando la finestra viene chiusa. Lascia vuoto per non usare questa funzione. Esempio: binary_sensor.finestra_camera.",
+          "door_sensor": "Sensore binario che diventa 'on' quando la porta è aperta. Se configurato: invia un avviso quando la porta si apre o si chiude. Non agisce mai sul clima. Lascia vuoto per non usare questa funzione. Esempio: binary_sensor.porta_camera.",
+          "window_detection_enabled": "Se disattivato, la finestra non ha alcun effetto sul climatizzatore — né spegnimento quando si apre, né avviso quando accendi manualmente con la finestra già aperta. Utile se il sensore ha comportamenti poco affidabili in certe condizioni (es. non si aggiorna correttamente durante usi prolungati della cucina)."
+        }
+      },
+      "simple_temperature": {
+        "title": "Termostato — Temperature e orari",
+        "description": "Imposta la temperatura desiderata durante il giorno e durante la notte, con i relativi orari.",
+        "data": {
+          "simple_target_day": "Temperatura target di giorno (°C)",
+          "simple_target_night": "Temperatura target di notte (°C)",
+          "simple_night_start": "Inizio fascia notturna",
+          "simple_night_end": "Fine fascia notturna",
+          "night_end_shutoff_enabled": "▶ Spegni il clima alla fine della modalità notturna (sempre)",
+          "night_end_shutoff_auto_only": "▶ Spegni a fine notte solo se acceso automaticamente",
+          "simple_turn_on_offset": "Scarto minimo per accendere sopra il target (°C)",
+          "simple_shutoff_margin": "Margine sotto il target prima di spegnere (°C)",
+          "simple_no_auto_on_night": "▶ Non accendere automaticamente il clima di notte",
+          "simple_dry_enabled": "▶ Usa deumidificatore prima del raffreddamento",
+          "simple_dry_max_min": "Tempo massimo in deumidificazione prima di passare al raffreddamento (min)",
+          "manual_shutoff_timer_min": "Timer spegnimento dopo accensione manuale (minuti)",
+          "manual_shutoff_timer_enabled": "Attivare lo spegnimento automatico se acceso manualmente?",
+          "season_mode": "Modalità stagionale",
+          "simple_eco_day_enabled": "Modalità Eco invece di spegnere (giorno)",
+          "simple_eco_night_enabled": "Modalità Eco invece di spegnere (notte)"
+        },
+        "data_description": {
+          "simple_target_day": "La temperatura che vuoi mantenere nella stanza durante il giorno. Esempio: 25°C → con sonda esterna il clima parte sopra 26.5°C, con sonda interna sopra 27°C.",
+          "simple_target_night": "La temperatura desiderata di notte. Di solito qualche grado in più rispetto al giorno per non raffreddare troppo mentre si dorme. Esempio: 26°C.",
+          "simple_night_start": "Da quest'ora entra in modalità notturna con la temperatura target notturna. La fascia diurna inizia automaticamente alla fine della notte. Esempio: 23:00.",
+          "simple_night_end": "A quest'ora finisce la modalità notturna e inizia automaticamente quella diurna. Esempio: 07:00.",
+          "night_end_shutoff_enabled": "Se attivato: quando la modalità notturna termina (es. alle 07:00), il climatizzatore viene spento SEMPRE, indipendentemente da chi lo aveva acceso. Utile per non lasciare il clima acceso tutta la mattina.",
+          "night_end_shutoff_auto_only": "Se attivato: spegne il clima a fine notte SOLO SE era stato acceso automaticamente dal termostato. Se lo avevi acceso tu a mano, non fa nulla. Può essere usato insieme all'opzione 'sempre'.",
+          "simple_turn_on_offset": "Di quanti gradi la temperatura deve superare il target prima che il clima si accenda. Con sonda esterna il default è 0.8°C (es. target 25°C → accende da 25.8°C). Con sonda interna il default è 1.0°C (es. target 25°C → accende da 26°C). Valori più bassi = accende prima ma con più cicli. Valori più alti = accende solo quando fa davvero caldo. Nota: alla fine della modalità notturna c'è sempre 1 ora di pausa prima che il termostato ricominci ad accendere il clima, per evitare accensioni indesiderate causate dal cambio di target.",
+          "simple_shutoff_margin": "Di quanti gradi la temperatura deve scendere sotto il target prima che il termostato spenga il climatizzatore. Con sonda esterna (decimale) il margine è applicato esattamente come impostato. Con sonda interna (solo interi) il valore viene arrotondato alla stessa regola usata per i comandi di temperatura: 0.5°C o meno diventa 0 (nessun effetto, spegne appena raggiunto il target), oltre 0.5°C diventa 1 grado intero. Un margine più alto tiene la stanza più a lungo vicino al target, a costo di qualche minuto in più di funzionamento. Default 0.2°C.",
+          "simple_no_auto_on_night": "Se attivato: durante la fascia notturna il termostato non accende mai il clima automaticamente, anche se la temperatura supera la soglia configurata. Se il clima era già acceso (es. lo hai acceso tu manualmente o era rimasto acceso dal pomeriggio), continua comunque a regolarlo e a spegnerlo quando raggiunge la temperatura target o a fine notte. Utile se preferisci dormire senza climatizzatore anche nelle notti calde e vuoi gestirlo tu manualmente.",
+          "simple_dry_enabled": "Se attivato: quando la temperatura sale leggermente sopra il target, il climatizzatore parte prima in modalità deumidificatore (DRY) invece che in raffreddamento. Questo abbassa l'umidità e fa percepire la stanza più fresca consumando meno. Dopo il tempo massimo configurato (o se la temperatura sale ulteriormente) passa automaticamente al raffreddamento pieno. Particolarmente utile in climi umidi come quello pugliese, soprattutto nelle ore mattutine. Se la temperatura all'accensione è già troppo alta, parte direttamente in raffreddamento senza passare dal dry.",
+          "simple_dry_max_min": "Quanto tempo al massimo il climatizzatore rimane in deumidificazione prima di passare al raffreddamento. Se durante questo tempo la stanza si raffredda abbastanza, si spegne senza passare al raffreddamento. Se invece la temperatura rimane alta o sale, dopo questo tempo passa automaticamente a raffreddare. Esempio: 30 minuti → dà al deumidificatore mezz'ora per abbassare l'umidità, poi se non basta raffredda. Valori più bassi (10-15 min) = meno deumidificazione, passa prima a raffreddare. Valori più alti (45-60 min) = più deumidificazione, utile nelle mattine con molta afa.",
+          "manual_shutoff_timer_min": "Se attivato dalla card, dopo un'accensione manuale il climatizzatore si spegne automaticamente dopo questi minuti, indipendentemente dal master switch — utile per un uso completamente manuale (es. uno scaldotto). Imposta 0 per non offrire mai questa funzione nella card.",
+          "manual_shutoff_timer_enabled": "Se attivo, il timer di spegnimento (impostato qui sotto) parte automaticamente ad ogni accensione manuale, senza bisogno di attivarlo ogni volta dalla card — puoi comunque attivarlo/disattivarlo in qualsiasi momento dalla card. Vale sempre, anche se il master switch dell'automazione è disattivato.",
+          "season_mode": "Estate: gestisce solo il raffrescamento (comportamento di sempre). Inverno: gestisce solo il riscaldamento. Auto: gestisce entrambe, passando dall'una all'altra in base alla temperatura, con un tempo minimo tra un cambio e l'altro per evitare cicli ravvicinati in mezza stagione. Manuale: nessuna automazione — resta attivo solo il timer di spegnimento e le protezioni di sicurezza (es. finestra aperta) — il master switch viene disattivato automaticamente. Off: tutto spento, incluso il timer — zero interferenze, gestione completamente manuale col telecomando originale.",
+          "simple_eco_day_enabled": "Invece di spegnere il climatizzatore quando la temperatura scende sotto il target meno il margine, lo mette in modalità Eco e segue passivamente la lettura della sua sonda interna, senza spingere ulteriormente. Resta in Eco finché la temperatura della stanza non risale sopra il target più il margine, poi riparte normalmente ricalcolando la fascia corretta. Si applica solo di giorno — vedi il campo separato per la notte. Richiede che il climatizzatore supporti un preset \"eco\" (verificabile tra gli attributi dell'entità in Home Assistant).",
+          "simple_eco_night_enabled": "Stesso comportamento del campo \"Modalità Eco invece di spegnere (giorno)\", ma applicato durante la fascia notturna."
+        }
+      },
+      "energia_simple": {
+        "title": "Termostato — Fotovoltaico",
+        "description": "Configura i sensori del fotovoltaico. Il clima si accenderà automaticamente quando stai producendo abbastanza energia solare e si spegnerà quando la produzione cala.",
+        "data": {
+          "fv_sensor": "Sensore produzione fotovoltaica (W)",
+          "consumption_sensor": "Sensore consumo rete (W)",
+          "battery_sensor": "Sensore stato di carica batteria (%)",
+          "fv_margin_w": "Surplus minimo per accendere (W)",
+          "soc_min": "Carica batteria minima per accendere (%)",
+          "fv_priority": "Priorità accensione (numero più basso = prima)",
+          "fv_stagger_minutes": "Distanza minima tra accensioni/spegnimenti (min)",
+          "fv_shutoff_enabled": "▶ Spegnimento automatico quando il FV cala",
+          "fv_shutoff_total_minutes": "Minuti totali di calo FV prima di spegnere",
+          "fv_turn_on_total_minutes": "Minuti totali di surplus FV prima di accendere",
+          "fv_sensor_offline_shutoff_enabled": "Spegni se sensore FV offline",
+          "fv_sensor_offline_shutoff_min": "Minuti prima di spegnere se il sensore FV è offline",
+          "fv_sensor_offline_notify_tts": "Avviso vocale per sensore FV offline",
+          "fv_sensor_offline_notify_telegram": "Avviso Telegram per sensore FV offline",
+          "fv_shutoff_threshold": "Soglia surplus FV per lo spegnimento (W)",
+          "sunset_info": "🌅 Orario tramonto oggi (informativo)",
+          "cutoff_info": "⏱️ Orario limite controllo manuale (informativo)",
+          "simple_sunset_anticipate_h": "Ore di anticipo rispetto al tramonto",
+          "fv_shutoff_manual": "Spegni anche se acceso manualmente",
+          "fv_shutoff_manual_delay_min": "Ritardo prima di spegnere un'accensione manuale",
+          "simple_no_reon_manual_off": "Non accendere se spento manualmente",
+          "simple_no_reon_manual_off_hours": "Ore di blocco riaccensione dopo spegnimento manuale"
+        },
+        "data_description": {
+          "fv_sensor": "Watt prodotti dai pannelli in tempo reale. Esempio: sensor.somma_sensori_zcs_pannelli.",
+          "consumption_sensor": "Consumo istantaneo dalla rete. Esempio: sensor.zcs_reteac_consumo_attuale.",
+          "battery_sensor": "Percentuale di carica della batteria. Esempio: sensor.batteria_soc.",
+          "fv_margin_w": "Quanti Watt di surplus ci devono essere oltre al consumo per accendere il clima. Esempio: 1200W → accende solo se produci 1200W più di quello che consumi.",
+          "soc_min": "Percentuale minima di carica della batteria per accendere il clima. Esempio: 70 → accende solo con batteria ≥ 70%.",
+          "fv_priority": "Con più climatizzatori, quello col numero più basso accende prima e spegne per ultimo. Esempio: camera=10, sala=20.",
+          "fv_stagger_minutes": "Pausa tra l'accensione di un clima e il successivo per evitare picchi. Esempio: 5 minuti.",
+          "fv_shutoff_enabled": "Se attivato: spegne il clima quando il surplus FV resta sotto soglia per N campioni consecutivi. Con più termostati spegne prima quello con priorità numerica più alta.",
+          "fv_shutoff_total_minutes": "Per quanti minuti consecutivi il surplus fotovoltaico deve restare insufficiente prima che il termostato spenga il climatizzatore. Il controllo usa sempre 4 campioni fissi: l'intervallo tra un campione e l'altro viene calcolato automaticamente dividendo questo valore per 4 (esempio: 20 minuti → un controllo ogni 5 minuti; 12 minuti → un controllo ogni 3 minuti). Un valore più basso rende lo spegnimento più reattivo; un valore più alto protegge meglio da picchi di consumo temporanei (es. piano cottura). Minimo 5 minuti.",
+          "fv_turn_on_total_minutes": "Per quanti minuti consecutivi il surplus fotovoltaico deve restare sufficiente prima che il termostato accenda (o riaccenda) il climatizzatore. Senza questa attesa, spegnersi per calo FV riduce il consumo della casa e può far apparire il surplus improvvisamente sufficiente al ciclo successivo, causando una riaccensione quasi immediata dopo lo spegnimento. Un valore più alto protegge meglio da queste oscillazioni; un valore più basso rende l'accensione più reattiva a un vero miglioramento della produzione. Minimo 5 minuti.",
+          "fv_sensor_offline_shutoff_enabled": "Se attivo, un climatizzatore acceso dal fotovoltaico viene spento automaticamente quando il sensore di produzione FV smette di rispondere per troppo tempo — senza quel dato non possiamo più sapere se il sole c'è davvero. Si applica SOLO ai climatizzatori accesi dal fotovoltaico: un'accensione manuale non viene mai toccata. Di notte non ha alcun effetto, dato che l'accensione notturna non passa mai dal controllo fotovoltaico.",
+          "fv_sensor_offline_shutoff_min": "Dopo quanti minuti di sensore FV offline spegnere questo specifico climatizzatore. Una notifica di allerta parte comunque entro pochi minuti dal rilevamento, indipendentemente da questo valore.",
+          "fv_sensor_offline_notify_tts": "Avviso vocale (Google Home) quando il sensore FV va offline e quando questo climatizzatore viene spento di conseguenza.",
+          "fv_sensor_offline_notify_telegram": "Avviso Telegram quando il sensore FV va offline e quando questo climatizzatore viene spento di conseguenza.",
+          "fv_shutoff_threshold": "Il surplus deve restare sotto questo valore in tutti gli ultimi N campioni. Valore 0 = spegne quando FV < consumo. Esempio: 500W → spegne quando il surplus scende sotto 500W.",
+          "sunset_info": "Orario in cui il sole tramonta oggi nella tua posizione, calcolato automaticamente da Home Assistant. Si aggiorna ogni volta che apri queste impostazioni.",
+          "cutoff_info": "Orario calcolato automaticamente: tramonto meno le ore di anticipo configurate. Dopo quest'ora l'automazione non spegne più il clima acceso manualmente dall'utente e non accende più automaticamente dal FV. Si aggiorna ogni volta che apri queste impostazioni.",
+          "simple_sunset_anticipate_h": "Quante ore prima del tramonto l'automazione smette di intervenire. L'accensione automatica dal FV è attiva dalla fine della modalità notturna fino a questo orario — calcolato automaticamente ogni giorno in base alla stagione. Minimo 2 ore. Esempio: tramonto 19:40 con 2 ore → automazione attiva fino alle 17:40.",
+          "fv_shutoff_manual": "Se attivo, il termostato spegnerà il clima anche quando è stato acceso manualmente dall'utente e il FV non produce abbastanza.",
+          "fv_shutoff_manual_delay_min": "Quanti minuti aspettare, dopo aver rilevato FV insufficiente, prima di spegnere un climatizzatore acceso manualmente — chi lo accende manualmente probabilmente sente caldo e non gli interessa il fotovoltaico nel breve termine. Minimo 10 minuti, consigliati almeno 30. Non si applica alle accensioni fatte dal fotovoltaico stesso, che restano immediate.",
+          "simple_no_reon_manual_off": "Se attivo: quando spegni manualmente il climatizzatore (telecomando, app Gree, o qualsiasi altro mezzo diverso dal termostato), l'integrazione non lo riaccenderà automaticamente per il numero di ore impostato qui sotto — vale sia per accensioni normali per temperatura, sia per accensioni da surplus fotovoltaico, sia di giorno che di notte. Trascorse le ore configurate, torna a funzionare normalmente. Utile se vuoi tenerlo spento tu manualmente senza che il termostato lo riaccenda subito dopo.",
+          "simple_no_reon_manual_off_hours": "Per quante ore, dopo uno spegnimento manuale, l'integrazione deve astenersi dal riaccendere automaticamente il climatizzatore. Vale sia di giorno che di notte. Esempio: 2 ore → se spegni alle 15:00, il termostato non lo riaccenderà prima delle 17:00, anche se la temperatura supera la soglia o c'è surplus FV disponibile."
+        }
+      },
+      "simple_notifiche": {
+        "title": "Termostato — Notifiche",
+        "description": "Configura separatamente gli avvisi vocali su Google Home e i messaggi Telegram. Puoi attivare canali diversi per ogni evento.",
+        "data": {
+          "tts_media_players": "━━━ GOOGLE HOME ━━━",
+          "tts_engine_entity": "Motore TTS (lascia vuoto per automatico)",
+          "simple_notify_tts_ac_on": "▶ Accensione clima",
+          "simple_notify_tts_ac_off": "▶ Spegnimento clima",
+          "simple_notify_tts_temp_change": "▶ Cambio temperatura",
+          "simple_notify_tts_window_open": "▶ Finestra aperta",
+          "simple_notify_tts_window_close": "▶ Finestra chiusa",
+          "simple_notify_tts_door_open": "▶ Porta aperta",
+          "simple_notify_tts_door_close": "▶ Porta chiusa",
+          "simple_notify_tts_night_start": "▶ Inizio modalità notturna",
+          "simple_notify_tts_night_end": "▶ Fine modalità notturna",
+          "simple_quiet_night_tts": "▶ Silenzia Google Home durante la notte",
+          "notify_targets": "━━━ TELEGRAM ━━━",
+          "notify_chat_ids": "Chat ID Telegram (alternativa alle entità notify)",
+          "simple_notify_tel_ac_on": "▶ Accensione clima",
+          "simple_notify_tel_ac_off": "▶ Spegnimento clima",
+          "simple_notify_tel_temp_change": "▶ Cambio temperatura",
+          "simple_notify_tel_window_open": "▶ Finestra aperta",
+          "simple_notify_tel_window_close": "▶ Finestra chiusa",
+          "simple_notify_tel_door_open": "▶ Porta aperta",
+          "simple_notify_tel_door_close": "▶ Porta chiusa",
+          "simple_notify_tel_night_start": "▶ Inizio modalità notturna",
+          "simple_notify_tel_night_end": "▶ Fine modalità notturna",
+          "simple_quiet_night_notify": "▶ Silenzia Telegram durante la notte",
+          "simple_notify_tel_ac_off_fv": "▶ Spegnimento per FV insufficiente",
+          "fv_sensor_offline_notify_tts": "Avviso vocale per sensore FV offline",
+          "fv_sensor_offline_notify_telegram": "Avviso Telegram per sensore FV offline",
+          "simple_notify_tts_manual_on": "Google Home — Accensione manuale",
+          "simple_notify_tel_manual_on": "Telegram — Accensione manuale",
+          "simple_notify_tts_manual_off": "Google Home — Spegnimento manuale",
+          "simple_notify_tel_manual_off": "Telegram — Spegnimento manuale"
+        },
+        "data_description": {
+          "tts_media_players": "Seleziona uno o più altoparlanti Google Home o Nest su cui il termostato parlerà. Lascia vuoto per non usare la voce.",
+          "tts_engine_entity": "Motore TTS da usare. Lascia vuoto per il predefinito di Home Assistant.",
+          "simple_notify_tts_ac_on": "Google Home annuncia quando il climatizzatore si accende automaticamente.",
+          "simple_notify_tts_ac_off": "Google Home annuncia quando il climatizzatore si spegne automaticamente per aver raggiunto la temperatura target.",
+          "simple_notify_tts_temp_change": "Google Home annuncia ogni cambio di temperatura rilevato nella stanza.",
+          "simple_notify_tts_window_open": "Google Home avvisa quando la finestra si apre (il clima si spegnerà dopo 5 minuti se rimane aperta).",
+          "simple_notify_tts_window_close": "Google Home avvisa quando la finestra viene richiusa e il clima viene riacceso.",
+          "simple_notify_tts_door_open": "Google Home avvisa quando la porta si apre. Solo informativo, non agisce sul clima.",
+          "simple_notify_tts_door_close": "Google Home avvisa quando la porta si chiude. Solo informativo.",
+          "simple_notify_tts_night_start": "Google Home annuncia l'inizio della modalità notturna con la temperatura target notturna.",
+          "simple_notify_tts_night_end": "Google Home annuncia la fine della modalità notturna.",
+          "simple_quiet_night_tts": "Se attivato: Google Home non parla durante la fascia notturna per non svegliarti. Gli avvisi di finestra aperta restano sempre attivi.",
+          "notify_targets": "Entità notify di Home Assistant per inviare messaggi Telegram. Esempio: notify.telegram_mimmo.",
+          "notify_chat_ids": "Alternativa alle entità notify: inserisci i Chat ID Telegram separati da virgola.",
+          "simple_notify_tel_ac_on": "Telegram avvisa quando il climatizzatore si accende automaticamente.",
+          "simple_notify_tel_ac_off": "Telegram avvisa quando il climatizzatore si spegne per aver raggiunto la temperatura target.",
+          "simple_notify_tel_temp_change": "Telegram avvisa ad ogni cambio di temperatura rilevato. Può essere frequente.",
+          "simple_notify_tel_window_open": "Telegram avvisa quando la finestra si apre.",
+          "simple_notify_tel_window_close": "Telegram avvisa quando la finestra viene richiusa.",
+          "simple_notify_tel_door_open": "Telegram avvisa quando la porta si apre. Solo informativo.",
+          "simple_notify_tel_door_close": "Telegram avvisa quando la porta si chiude. Solo informativo.",
+          "simple_notify_tel_night_start": "Telegram avvisa all'inizio della modalità notturna.",
+          "simple_notify_tel_night_end": "Telegram avvisa alla fine della modalità notturna.",
+          "simple_quiet_night_notify": "Se attivato: Telegram non invia messaggi automatici durante la fascia notturna.",
+          "simple_notify_tel_ac_off_fv": "Telegram avvisa quando il clima si spegne perché il fotovoltaico non produce abbastanza. Il messaggio indica che si tratta di uno spegnimento automatico FV, non per temperatura raggiunta.",
+          "fv_sensor_offline_notify_tts": "Se attivo, avvisa su Google Home quando il sensore di produzione fotovoltaica va offline e quando un climatizzatore viene spento di conseguenza.",
+          "fv_sensor_offline_notify_telegram": "Se attivo, avvisa su Telegram quando il sensore di produzione fotovoltaica va offline e quando un climatizzatore viene spento di conseguenza.",
+          "simple_notify_tts_manual_on": "Annuncia quando viene rilevata un'accensione manuale (telecomando, app del produttore — non dalla card).",
+          "simple_notify_tel_manual_on": "Invia un messaggio quando viene rilevata un'accensione manuale.",
+          "simple_notify_tts_manual_off": "Annuncia quando viene rilevato uno spegnimento manuale (telecomando, app del produttore — non dalla card).",
+          "simple_notify_tel_manual_off": "Invia un messaggio quando viene rilevato uno spegnimento manuale."
+        }
+      },
+      "cambia_modalita": {
+        "title": "Modifica modalità di configurazione",
+        "description": "Puoi cambiare la modalità di configurazione. Attenzione: cambiando modalità i parametri della vecchia modalità vengono mantenuti ma potresti dover riconfigurare alcune impostazioni.",
+        "data": {
+          "config_mode": "Modalità di configurazione"
+        },
+        "data_description": {
+          "config_mode": "🟢 SEMPLIFICATO — Pochi campi essenziali, logica automatica.\n🔵 SEMPLIFICATO CON FOTOVOLTAICO — Come il semplificato + gestione FV.\n⚙️ COMPLETO — Tutti i parametri avanzati."
+        }
+      },
+      "protezione_potenza": {
+        "title": "Protezione potenza — Evita distacco contatore",
+        "description": "Configura la protezione automatica contro il distacco del contatore. Se il consumo supera la soglia impostata, il climatizzatore viene spento automaticamente e riacceso quando i consumi calano.",
+        "data": {
+          "power_limit_enabled": "▶ Attiva protezione potenza",
+          "power_limit_sensor": "Sensore consumo da monitorare (W)",
+          "power_limit_mode": "Modalità gestione",
+          "power_limit_max_w": "Soglia massima di consumo prima dello spegnimento (W)",
+          "power_limit_hysteresis_w": "Riduzione consumo necessaria per riaccendere (W)",
+          "power_limit_restore_min": "Minuti di consumo basso prima di riaccendere",
+          "power_limit_notify_tts": "▶ Avviso vocale Google Home",
+          "power_limit_notify_telegram": "▶ Avviso Telegram"
+        },
+        "data_description": {
+          "power_limit_enabled": "Se attivato: il termostato monitora il consumo e spegne automaticamente il climatizzatore se supera la soglia per almeno 30 secondi (anti-picco). Lo riaccende quando i consumi calano abbastanza.",
+          "power_limit_sensor": "Il sensore che misura il consumo elettrico del circuito da proteggere. Può essere il consumo totale della casa o di un singolo circuito (es. meter della sala da pranzo). Esempio: sensor.consumo_sala.",
+          "power_limit_mode": "Unico clima: gestisce solo questo climatizzatore indipendentemente dagli altri. Più clima: coordina lo spegnimento e la riaccensione in cascata con gli altri termostati che hanno la stessa protezione attiva, usando la priorità già configurata.",
+          "power_limit_max_w": "Se il consumo supera questo valore per almeno 30 secondi, il climatizzatore viene spento. I 30 secondi evitano spegnimenti per picchi momentanei (es. avvio lavatrice, forno a induzione). Esempio: 3500W → spegne se stai assorbendo più di 3500W.",
+          "power_limit_hysteresis_w": "Di quanti Watt deve scendere il consumo rispetto alla soglia massima prima che il clima possa riaccendersi. Esempio: soglia 3500W, isteresi 800W → riaccende solo quando il consumo scende sotto 2700W. Evita cicli rapidi di accensione/spegnimento.",
+          "power_limit_restore_min": "Quanti minuti il consumo deve restare sotto la soglia di riaccensione prima che il clima si riaccenda. Esempio: 5 minuti → se i consumi calano ma risalgono prima di 5 minuti, il clima non riaccende.",
+          "power_limit_notify_tts": "Se attivato: Google Home annuncia quando il clima viene spento o riacceso per protezione potenza.",
+          "power_limit_notify_telegram": "Se attivato: Telegram avvisa quando il clima viene spento o riacceso per protezione potenza."
+        }
+      },
+      "protezione_potenza_completo": {
+        "title": "Protezione potenza — Evita distacco contatore",
+        "description": "Configura la protezione automatica contro il distacco del contatore. Se il consumo supera la soglia impostata, il climatizzatore viene spento automaticamente e riacceso quando i consumi calano.",
+        "data": {
+          "power_limit_enabled": "▶ Attiva protezione potenza",
+          "power_limit_sensor": "Sensore consumo da monitorare (W)",
+          "power_limit_mode": "Modalità gestione",
+          "power_limit_max_w": "Soglia massima di consumo prima dello spegnimento (W)",
+          "power_limit_hysteresis_w": "Riduzione consumo necessaria per riaccendere (W)",
+          "power_limit_restore_min": "Minuti di consumo basso prima di riaccendere",
+          "power_limit_notify_tts": "▶ Avviso vocale Google Home",
+          "power_limit_notify_telegram": "▶ Avviso Telegram",
+          "power_limit_msg_off": "Messaggio spegnimento (template)",
+          "power_limit_msg_on": "Messaggio riaccensione (template)"
+        },
+        "data_description": {
+          "power_limit_enabled": "Se attivato: il termostato monitora il consumo e spegne automaticamente il climatizzatore se supera la soglia per almeno 30 secondi (anti-picco). Lo riaccende quando i consumi calano abbastanza.",
+          "power_limit_sensor": "Il sensore che misura il consumo elettrico del circuito da proteggere. Può essere il consumo totale della casa o di un singolo circuito (es. meter della sala da pranzo). Esempio: sensor.consumo_sala.",
+          "power_limit_mode": "Unico clima: gestisce solo questo climatizzatore indipendentemente dagli altri. Più clima: coordina lo spegnimento e la riaccensione in cascata con gli altri termostati che hanno la stessa protezione attiva, usando la priorità già configurata.",
+          "power_limit_max_w": "Se il consumo supera questo valore per almeno 30 secondi, il climatizzatore viene spento. I 30 secondi evitano spegnimenti per picchi momentanei (es. avvio lavatrice, forno a induzione). Esempio: 3500W → spegne se stai assorbendo più di 3500W.",
+          "power_limit_hysteresis_w": "Di quanti Watt deve scendere il consumo rispetto alla soglia massima prima che il clima possa riaccendersi. Esempio: soglia 3500W, isteresi 800W → riaccende solo quando il consumo scende sotto 2700W. Evita cicli rapidi di accensione/spegnimento.",
+          "power_limit_restore_min": "Quanti minuti il consumo deve restare sotto la soglia di riaccensione prima che il clima si riaccenda. Esempio: 5 minuti → se i consumi calano ma risalgono prima di 5 minuti, il clima non riaccende.",
+          "power_limit_notify_tts": "Se attivato: Google Home annuncia quando il clima viene spento o riacceso per protezione potenza.",
+          "power_limit_notify_telegram": "Se attivato: Telegram avvisa quando il clima viene spento o riacceso per protezione potenza.",
+          "power_limit_msg_off": "Messaggio inviato quando il clima viene spento per eccesso di consumo. Variabili: {{ name }} = nome termostato, {{ consumo }} = consumo attuale in W.",
+          "power_limit_msg_on": "Messaggio inviato quando il clima viene riacceso dopo il calo dei consumi. Variabili: {{ name }} = nome termostato."
+        }
+      },
+      "emergenza_simple": {
+        "title": "Emergenza caldo",
+        "description": "Configura il comportamento dello switch 'Emergenza caldo'. Quando attivato manualmente, il termostato ignora completamente il fotovoltaico e accende il clima solo in base alla temperatura, come se fosse in modalità semplice. Si disattiva automaticamente 5 minuti prima della modalità notturna o quando la temperatura rientra.",
+        "data": {
+          "emergency_heat_active": "▶ Attiva emergenza caldo adesso",
+          "emergency_heat_threshold": "Temperatura sopra il target per accendere in emergenza (°C)",
+          "emergency_heat_end_threshold": "Temperatura sopra il target per considerare l'emergenza rientrata (°C)",
+          "emergency_notify_tts": "▶ Avviso vocale Google Home",
+          "emergency_notify_telegram": "▶ Avviso Telegram"
+        },
+        "data_description": {
+          "emergency_heat_active": "Attiva o disattiva lo switch emergenza caldo direttamente da qui. Quando attivo il termostato ignora completamente il fotovoltaico e accende il clima solo in base alla temperatura. Si disattiva automaticamente 5 minuti prima della modalità notturna o quando la temperatura rientra nella soglia configurata.",
+          "emergency_heat_threshold": "Di quanti gradi la temperatura deve superare il target per accendere il clima in modalità emergenza. Esempio: 1.5°C con target 25°C → accende da 26.5°C ignorando il fotovoltaico.",
+          "emergency_heat_end_threshold": "Quando la temperatura scende entro questo margine dal target, l'emergenza si considera rientrata e lo switch si disattiva automaticamente. Esempio: 0.7°C con target 25°C → emergenza finisce quando scende sotto 25.7°C.",
+          "emergency_notify_tts": "Se attivato: Google Home annuncia quando inizia e finisce l'emergenza caldo.",
+          "emergency_notify_telegram": "Se attivato: Telegram avvisa quando inizia e finisce l'emergenza caldo."
+        }
+      },
+      "emergenza_completo": {
+        "title": "Emergenza caldo",
+        "description": "Configura il comportamento dello switch 'Emergenza caldo'. Quando attivato manualmente, il termostato ignora completamente il fotovoltaico e accende il clima solo in base alla temperatura, come se fosse in modalità semplice. Si disattiva automaticamente 5 minuti prima della modalità notturna o quando la temperatura rientra.",
+        "data": {
+          "emergency_heat_active": "▶ Attiva emergenza caldo adesso",
+          "emergency_heat_threshold": "Temperatura sopra il target per accendere in emergenza (°C)",
+          "emergency_heat_end_threshold": "Temperatura sopra il target per considerare l'emergenza rientrata (°C)",
+          "emergency_notify_tts": "▶ Avviso vocale Google Home",
+          "emergency_notify_telegram": "▶ Avviso Telegram",
+          "emergency_msg_on": "Messaggio inizio emergenza (template)",
+          "emergency_msg_off": "Messaggio fine emergenza (template)"
+        },
+        "data_description": {
+          "emergency_heat_active": "Attiva o disattiva lo switch emergenza caldo direttamente da qui. Quando attivo il termostato ignora completamente il fotovoltaico e accende il clima solo in base alla temperatura. Si disattiva automaticamente 5 minuti prima della modalità notturna o quando la temperatura rientra nella soglia configurata.",
+          "emergency_heat_threshold": "Di quanti gradi la temperatura deve superare il target per accendere il clima in modalità emergenza. Esempio: 1.5°C con target 25°C → accende da 26.5°C ignorando il fotovoltaico.",
+          "emergency_heat_end_threshold": "Quando la temperatura scende entro questo margine dal target, l'emergenza si considera rientrata e lo switch si disattiva automaticamente. Esempio: 0.7°C con target 25°C → emergenza finisce quando scende sotto 25.7°C.",
+          "emergency_notify_tts": "Se attivato: Google Home annuncia quando inizia e finisce l'emergenza caldo.",
+          "emergency_notify_telegram": "Se attivato: Telegram avvisa quando inizia e finisce l'emergenza caldo.",
+          "emergency_msg_on": "Messaggio inviato quando inizia l'emergenza caldo. Variabili: {{ name }} = nome termostato, {{ temp }} = temperatura attuale, {{ target }} = temperatura target.",
+          "emergency_msg_off": "Messaggio inviato quando l'emergenza caldo termina. Stesse variabili disponibili."
+        }
+      },
+      "inverno": {
+        "title": "❄️ Inverno",
+        "description": "Impostazioni usate quando la modalità stagionale è Inverno o Auto.",
+        "data": {
+          "winter_target_day": "Target giorno inverno",
+          "winter_target_night": "Target notte inverno",
+          "winter_turn_on_offset": "Scarto accensione inverno",
+          "winter_shutoff_margin": "Margine spegnimento inverno",
+          "winter_soc_min": "Soglia batteria minima FV — inverno",
+          "winter_floor_sensor": "Sensore anello riscaldamento a pavimento",
+          "emergency_winter_heat_threshold": "Emergenza accendi riscaldamento — soglia",
+          "emergency_winter_heat_end_threshold": "Emergenza accendi riscaldamento — soglia fine"
+        },
+        "data_description": {
+          "winter_target_day": "Temperatura target di giorno quando la stagione è Inverno o Auto (in Auto, mentre è attivo il riscaldamento).",
+          "winter_target_night": "Temperatura target di notte quando la stagione è Inverno o Auto.",
+          "winter_turn_on_offset": "Di quanti gradi sotto il target la temperatura deve scendere prima di poter accendere — usato sia con che senza sensore anello pavimento.",
+          "winter_shutoff_margin": "Di quanti gradi sopra il target la temperatura deve salire prima di spegnere.",
+          "winter_soc_min": "Sotto questa percentuale di batteria, il riscaldamento non si accende da fotovoltaico — più alta di quella estiva, dato che in inverno la batteria è preziosa.",
+          "winter_floor_sensor": "Opzionale — se configurato, l'assistenza da fotovoltaico non accende il condizionatore se l'anello del pavimento sta già scaldando questa stanza, evitando lo spreco. Lascia vuoto se non hai questo impianto.",
+          "emergency_winter_heat_threshold": "Di quanti gradi sotto il target la temperatura deve scendere prima che l'emergenza riscaldamento intervenga, ignorando il fotovoltaico.",
+          "emergency_winter_heat_end_threshold": "Di quanti gradi sopra la soglia di accensione la temperatura deve risalire prima che l'emergenza si disattivi automaticamente."
+        }
+      }
+    }
+  }
+}
