@@ -63,19 +63,50 @@ class CherubiniCover(CoverEntity):
         return 100 if self._state == STATE_TILT else 0
 
     async def async_update(self) -> None:
-        """Polling ogni 30 secondi per verificare se lo Shelly è raggiungibile."""
+        """Verifica raggiungibilità e sincronizza gli stati non ambigui dello Shelly.
+
+        Cherubini/Shelly usa ``cover:0.state = closed`` anche quando la
+        tapparella è nella posizione TILT (tapparella abbassata, lamelle aperte).
+        Per questo ``closed`` NON può essere usato da solo per distinguere
+        CLOSED da TILT: in quel caso manteniamo lo stato logico TLO già noto.
+
+        ``open`` identifica invece OPEN e ``stopped`` identifica la posizione
+        intermedia di chiusura completa della tapparella.
+        """
         try:
             timeout = aiohttp.ClientTimeout(total=5)
             async with aiohttp.ClientSession(timeout=timeout) as session:
                 async with session.get(
                     f"http://{self._ip}/rpc/Shelly.GetStatus"
                 ) as resp:
-                    if resp.status == 200:
-                        if not self._available:
-                            _LOGGER.info("TLO: Shelly %s tornato online", self._ip)
-                        self._available = True
-                    else:
+                    if resp.status != 200:
                         self._available = False
+                        return
+
+                    data = await resp.json()
+                    if not self._available:
+                        _LOGGER.info("TLO: Shelly %s tornato online", self._ip)
+                    self._available = True
+
+                    cover_status = data.get("cover:0", {})
+                    shelly_state = cover_status.get("state")
+                    old_state = self._state
+
+                    if shelly_state == "open":
+                        new_state = STATE_OPEN
+                    elif shelly_state == "stopped":
+                        new_state = STATE_CLOSED
+                    else:
+                        # ``closed`` è ambiguo: può essere TILT oppure una
+                        # condizione conseguente a un comando lungo GIÙ.
+                        # Non sovrascrivere quindi lo stato logico TLO.
+                        new_state = self._state
+
+                    if new_state != old_state:
+                        self._state = new_state
+                        self._save_state()
+                        self.async_write_ha_state()
+
         except aiohttp.ClientConnectorError:
             if self._available:
                 _LOGGER.warning("TLO: Shelly %s non raggiungibile", self._ip)
